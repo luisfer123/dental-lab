@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<div th:fragment="login-form" class="container">
+		<div class="card mt-5 mx-auto" style="width: 25rem;">
+			<div class="card-body">
+				<h5 class="cart-title mb-5 text-center">Identificarse</h5>
+				<div th:if="${param.login_error}" class="error">
+					<div class="container alert alert-danger text-center" role="alert">
+						Nombre de usuario o contrace&ntilde;a incorrectos.
+					</div>
+				</div>
+				
+				<form th:fragment="only-login-form" th:action="@{/login}" method="post">
+				  <div class="mb-3">
+				    <label for="username" class="form-label">Nombre de usuario</label>
+				    <input type="text" class="form-control" id="username" name="username" aria-describedby="Nombre de usuario" autofocus="autofocus">
+				  </div>
+				  <div class="mb-3">
+				    <label for="password" class="form-label">Contrace&ntilde;a</label>
+				    <input type="password" class="form-control" id="password" name="password">
+				  </div>
+			
+				  <button type="submit" class="btn btn-primary mt-3" value="Contrac&ntilde;a">Enviar</button>
+				</form>	
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>
