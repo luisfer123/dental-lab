@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	
+	<div th:fragment="categories-list" th:remove="tag">
+		<h2 class="h2 m-3 mb-5 text-center">Categorias:</h2>
+		
+		<div th:if="${categories == null or categories.empty}" class="container">
+			<p>Actualmente no hay Categorias disponibles.</p>
+		</div>
+		
+	
+		<div th:if="${categories !=null and !categories.empty}" class="container">
+			<table class="table">
+				<tbody>
+					<tr th:each="category : ${categories}">
+						<th th:text="${category.name}"></th>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</body>
+</html>
