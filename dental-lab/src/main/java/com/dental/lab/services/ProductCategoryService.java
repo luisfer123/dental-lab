@@ -12,7 +12,7 @@ public interface ProductCategoryService {
 	 * equal to {@code null}. The must be only one {@code ProductCategory} with its
 	 * {@code parentCategory} equal to {@code null}.
 	 */
-	ProductCategory findRoodCategory();
+	ProductCategory findRootCategory();
 	
 	/**
 	 * 

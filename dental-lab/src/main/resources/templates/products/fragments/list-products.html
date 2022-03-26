@@ -2,21 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	
+
 	<div th:fragment="products-list" th:remove="tag">
 		<h2 class="h2 m-3 mb-5 text-center">Productos Disponibles:</h2>
-		
+
 		<div th:if="${products == null or products.empty}" class="container">
 			<p>Actualmente no hay Productos disponibles.</p>
 		</div>
-		
-	
+
+
 		<div th:if="${products !=null and !products.empty}" class="container">
 			<table class="table">
 				<thead class="table-light">
 					<tr>
 						<th>Nombre</th>
-						<th>Descripci&otilde;n</th>
+						<th>Descripci&oacute;n</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -27,6 +27,22 @@
 				</tbody>
 			</table>
 		</div>
+
+		<div class="container">
+			<nav aria-label="Page navigation example">
+				<ul class="pagination">
+					<li class="page-item">
+						<a class="page-link" th:href="@{/products/list(category_id=${currentCategoryId}, page_number=0)}" aria-label="Previous"> <span aria-hidden="true">&laquo;</span></a>
+					</li>
+					<li class="page-item" th:each="pageNumber : ${pageNumbers}">
+						<a class="page-link" th:href="@{/products/list(category_id=${currentCategoryId}, page_num=${pageNumber})}" th:text="${pageNumber}"></a></li>
+					<li class="page-item">
+						<a class="page-link" th:href="@{/products/list(category_id=${currentCategoryId}, page_num=${totalPages-1})}"	aria-label="Next"> <span aria-hidden="true">&raquo;</span></a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+
 	</div>
 
 </body>

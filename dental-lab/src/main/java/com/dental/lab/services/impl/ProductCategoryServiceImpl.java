@@ -26,7 +26,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public ProductCategory findRoodCategory() {
+	public ProductCategory findRootCategory() {
 		return categoryRepo.findRootCategory();
 	}
 
