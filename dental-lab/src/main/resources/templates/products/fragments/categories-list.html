@@ -2,24 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	
+
 	<div th:fragment="categories-list" th:remove="tag">
 		<h2 class="h2 m-3 mb-5 text-center">Categorias:</h2>
-		
-		<div th:if="${categories == null or categories.empty}" class="container">
-			<p>Actualmente no hay Categorias disponibles.</p>
-		</div>
-		
-	
-		<div th:if="${categories !=null and !categories.empty}" class="container">
-			<table class="table">
+
+		<div class="container">
+
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li th:each="c : ${categoryPath}" class="breadcrumb-item"><a
+						th:text="${c.name}" th:href="@{/products/list?category_id=} + ${c.id}" style="text-decoration: none;"></a></li>
+				</ol>
+			</nav>
+
+			<table class="table mt-5">
 				<tbody>
 					<tr th:each="category : ${categories}">
-						<th th:text="${category.name}"></th>
+						<th><a style="text-decoration: none;"
+							th:href="@{/products/list?category_id=} + ${category.id}"
+							th:text="${category.name}" class="link"></a></th>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+
 	</div>
 
 </body>

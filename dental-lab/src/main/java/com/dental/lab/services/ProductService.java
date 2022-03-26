@@ -1,14 +1,13 @@
 package com.dental.lab.services;
 
 import java.util.List;
+import java.util.Set;
 
 import com.dental.lab.model.entities.Product;
-import com.dental.lab.model.entities.ProductCategory;
 
 public interface ProductService {
 	
 	List<Product> findAll();
-	
-	List<ProductCategory> findRoodCategories();
-
+		
+	Set<Product> findByCategoryId(Long categoryId);
 }

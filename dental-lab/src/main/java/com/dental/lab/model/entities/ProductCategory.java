@@ -26,7 +26,9 @@ import org.hibernate.annotations.GenericGenerator;
  * {@linkplain Product} must belong to a single pat in the {@linkplain ProductCategory} 
  * tree. <br>
  * {@linkplain ProductCategor} has a self referencing association to model the
- * Category-SubCategory model.
+ * Category-SubCategory model.<br>
+ * There can be only one root category, that is, only one category can have 
+ * {@code ProductCategory.parentCategory} equal to null.
  * 
  * @author Luis Fernando Martinez Oritz
  *
@@ -49,11 +51,11 @@ public class ProductCategory {
 	@Column(name = "depth")
 	private int depth;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private ProductCategory parentCategory;
 	
-	@OneToMany(mappedBy = "parentCategory")
-	private Set<ProductCategory> subCategories = new HashSet<>();
+	@OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
+	private Set<ProductCategory> subCategories;
 
 	public int getDepth() {
 		return depth;
