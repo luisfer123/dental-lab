@@ -2,10 +2,6 @@ package com.dental.lab.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.HashSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -38,9 +34,12 @@ public class AuthorityRepositoryTest {
 		User adminTest = new User();
 		adminTest.setUsername(usernameTestAdmin);
 		adminTest.setPassword(passwordTestAdmin);
-		adminTest.setAuthorities(
-				Stream.of(new Authority(EAuthority.ROLE_ADMIN), new Authority(EAuthority.ROLE_CLIENT), new Authority(EAuthority.ROLE_TECHNICIAN), new Authority(EAuthority.ROLE_USER))
-				.collect(Collectors.toCollection(HashSet::new)));
+		
+		adminTest.addAuthority(new Authority(EAuthority.ROLE_ADMIN));
+		adminTest.addAuthority(new Authority(EAuthority.ROLE_CLIENT));
+		adminTest.addAuthority(new Authority(EAuthority.ROLE_DENTIST));
+		adminTest.addAuthority(new Authority(EAuthority.ROLE_TECHNICIAN));
+		adminTest.addAuthority(new Authority(EAuthority.ROLE_USER));
 		em.persist(adminTest);
 		
 		assertThat(authRepo.findUserAuthoritesByUsername(usernameTestAdmin))
@@ -48,14 +47,14 @@ public class AuthorityRepositoryTest {
 				.containsExactlyInAnyOrder(EAuthority.ROLE_USER,
 						EAuthority.ROLE_CLIENT,
 						EAuthority.ROLE_TECHNICIAN,
-						EAuthority.ROLE_ADMIN);
+						EAuthority.ROLE_ADMIN,
+						EAuthority.ROLE_DENTIST);
 		
 		User userTest = new User();
 		userTest.setUsername(usernameTestUser);
 		userTest.setPassword(passwordTestUser);
-		userTest.setAuthorities(
-				Stream.of(new Authority(EAuthority.ROLE_USER))
-				.collect(Collectors.toCollection(HashSet::new)));
+		
+		userTest.addAuthority(new Authority(EAuthority.ROLE_USER));
 		em.persist(userTest);
 		
 		assertThat(authRepo.findUserAuthoritesByUsername(usernameTestUser))

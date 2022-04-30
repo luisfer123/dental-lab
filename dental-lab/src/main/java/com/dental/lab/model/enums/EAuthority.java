@@ -14,12 +14,25 @@ import com.dental.lab.model.entities.User;
  */
 public enum EAuthority {
 
-	ROLE_USER,
+	ROLE_USER ("Rol Usuario"),
 	
-	ROLE_CLIENT,
+	ROLE_CLIENT ("Rol Cliente"),
 	
-	ROLE_TECHNICIAN,
+	ROLE_TECHNICIAN ("Rol Técnico"),
 	
-	ROLE_ADMIN
+	ROLE_DENTIST ("Rol Dentista"),
 	
+	ROLE_ADMIN ("Rol Administrador")
+	
+	;
+	
+	private final String nameInSpanish;
+	
+	private EAuthority(String nameInSpanish) {
+		this.nameInSpanish = nameInSpanish;
+	}
+	
+	public String getNameInSpanish() {
+		return this.nameInSpanish;
+	}
 }

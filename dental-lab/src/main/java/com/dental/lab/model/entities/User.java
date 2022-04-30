@@ -1,5 +1,6 @@
 package com.dental.lab.model.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,18 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.dental.lab.model.payloads.CreateUserFormPayload;
+
+/**
+ * There are different types of Users:
+ * - Dentist
+ * - Technician
+ * We use the security Roles ({@linkplain Authority}) to identify the
+ * type of User.
+ * 
+ * @author Luis Fernando Martinez Oritz
+ *
+ */
 @Entity
 @Table(name = "User")
 public class User {
@@ -33,6 +46,18 @@ public class User {
 	@Column
 	private String email;
 	
+	@Column(name = "first_name")
+	private String firstName;
+	
+	@Column(name = "second_name")
+	private String secondName;
+	
+	@Column(name = "last_name")
+	private String lastName;
+	
+	@Column(name = "second_last_name")
+	private String secondLastName;
+	
 	@ManyToMany(cascade = {
 			CascadeType.PERSIST,
 			CascadeType.MERGE
@@ -40,7 +65,42 @@ public class User {
 	@JoinTable(name = "User_has_Authority",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "authority_id"))
-	private Set<Authority> authorities;
+	private Set<Authority> authorities = new HashSet<>();
+	
+	@ManyToMany(cascade = {
+			CascadeType.PERSIST,
+			CascadeType.MERGE
+	})
+	@JoinTable(name = "User_has_Address",
+			joinColumns = @JoinColumn(name = "User_id"),
+			inverseJoinColumns = @JoinColumn(name = "Address_id"))
+	private Set<Address> addresses = new HashSet<>();
+	
+	public User() {}
+	
+	public User(String username, String password, String email, String firstName,
+			String secondName, String lastName, String secondLastName) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.email = email;
+		this.firstName = firstName;
+		this.secondName = secondName;
+		this.lastName = lastName;
+		this.secondLastName = secondLastName;
+	}
+
+	public static User buildWithoutAuthorities(CreateUserFormPayload userPayload) {
+		
+		return new User(
+				userPayload.getUsername(),
+				userPayload.getPassword(),
+				userPayload.getEmail(),
+				userPayload.getFirstName(),
+				userPayload.getSecondName(),
+				userPayload.getLastName(),
+				userPayload.getSecondLastName());
+	}
 	
 	public void addAuthority(Authority authority) {
 		authorities.add(authority);
@@ -50,6 +110,16 @@ public class User {
 	public void removeAuthority(Authority authority) {
 		authorities.remove(authority);
 		authority.getUsers().remove(this);
+	}
+	
+	public void addAddress(Address newAddress) {
+		this.addresses.add(newAddress);
+		newAddress.getUsers().add(this);
+	}
+	
+	public void removeAddress(Address address) {
+		this.addresses.remove(address);
+		address.getUsers().remove(this);
 	}
 
 	public Long getId() {
@@ -87,11 +157,43 @@ public class User {
 	public Set<Authority> getAuthorities() {
 		return authorities;
 	}
-
-	public void setAuthorities(Set<Authority> authorities) {
-		this.authorities = authorities;
-	}
 	
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getSecondName() {
+		return secondName;
+	}
+
+	public void setSecondName(String secondName) {
+		this.secondName = secondName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getSecondLastName() {
+		return secondLastName;
+	}
+
+	public void setSecondLastName(String secondLastName) {
+		this.secondLastName = secondLastName;
+	}
+
+	public Set<Address> getAddresses() {
+		return addresses;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -108,6 +210,13 @@ public class User {
 	@Override
 	public int hashCode() {
 		return getClass().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
+				+ ", firstName=" + firstName + ", secondName=" + secondName + ", lastName=" + lastName
+				+ ", secondLastName=" + secondLastName + ", authorities=" + authorities + "]";
 	}
 
 }

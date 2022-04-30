@@ -1,5 +1,6 @@
 package com.dental.lab.model.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -43,7 +44,7 @@ public class Authority {
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	
-	@Column(name = "authority")
+	@Column(name = "authority", unique = true)
 	@Enumerated(EnumType.STRING)
 	private EAuthority authority;
 	
@@ -51,7 +52,7 @@ public class Authority {
 	private String description;
 	
 	@ManyToMany(mappedBy = "authorities")
-	private Set<User> users;
+	private Set<User> users = new HashSet<>();
 	
 	public Authority() {}
 	
@@ -90,5 +91,25 @@ public class Authority {
 	public void setUsers(Set<User> users) {
 		this.users = users;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this)
+			return true;
+		
+		if((o instanceof Authority))
+			return false;
+		
+		Authority other = (Authority) o;
+		return id != null &&
+				id.equals(other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "Authority [id=" + id + ", authority=" + authority.toString() + ", description=" + description + "]";
+	}
+	
+	
 
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<base th:replace="fragments/bootstrap::head"/>
+
+<title>Administrar Usuarios</title>
+</head>
+<body>
+
+	<div th:replace="fragments/main-navbar::main-navbar"></div>
+	<div class="container">
+		<div class="row mx-auto">
+			<div class="col-md-4 text-center">
+				<div th:replace="users/fragments/admin-users-sidemenu::side-menu"></div>
+			</div>
+			
+			<div class="col-md-8">
+				<div th:replace="users/fragments/users-list::users-list"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

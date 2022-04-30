@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="side-menu" th:remove="tag">
+
+		<div class="container">
+			<h3 class="h3 mt-5">Administrar</h3>
+			<ul class="nav flex-column mt-5 pt-1">
+				<li class="nav-item">
+					<a class="nav-link active" aria-current="page" th:href="@{/admin/users}">Lista de Usuarios</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/admin/users/add}">Nuevo Usuario</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
