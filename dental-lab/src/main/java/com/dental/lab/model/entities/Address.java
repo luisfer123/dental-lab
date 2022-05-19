@@ -1,7 +1,6 @@
 package com.dental.lab.model.entities;
 
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -29,7 +28,7 @@ public class Address {
 	@Column(name = "number")
 	private int number;
 	
-	@Column(name = "inner-number")
+	@Column(name = "inner_number")
 	private String intNumber;
 	
 	@Column(name = "street")
@@ -45,15 +44,15 @@ public class Address {
 	@Enumerated(EnumType.STRING)
 	private EAddressType addressType;
 	
-	@ManyToMany(mappedBy = "addresses")
-	private Set<User> users;
+	@ManyToOne
+	private User user;
 
-	public Set<User> getUsers() {
-		return users;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -128,6 +127,12 @@ public class Address {
 	@Override
 	public int hashCode() {
 		return getClass().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "Address [number=" + number + ", intNumber=" + intNumber + ", street=" + street + ", zipPostcode="
+				+ zipPostcode + ", city=" + city + ", addressType=" + addressType + "]";
 	}
 
 }

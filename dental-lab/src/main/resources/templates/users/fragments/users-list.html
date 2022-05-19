@@ -20,7 +20,10 @@
 				</thead>
 				<tbody>
 					<tr th:each="user : ${users}">
-						<th th:text="${user.username}"></th>
+						<th><a class="link-dark" 
+								style="text-decoration: none"
+								th:href="@{/admin/users/edit(user_id=${user.id})}" 
+								th:text="${user.username}"></a></th>
 						<td th:text="${user.email}"></td>
 					</tr>
 				</tbody>

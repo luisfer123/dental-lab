@@ -1,9 +1,13 @@
 package com.dental.lab.services;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -66,6 +70,47 @@ public class UserServiceUnitTest {
 
 		assertNotNull(user);
 		assertEquals(usernameTestUser1, user.getUsername());
+	}
+	
+	@Test
+	public void findByFullLastNameTest() {
+		
+	}
+	
+	@Test
+	public void findUsernamesWithClosestLevenshteinDistanceTest() {
+		
+		User user = new User();
+		user.setUsername("user");
+		user.setPassword("password");
+		user.setEmail("user@mail.com");
+		
+		User user1 = new User();
+		user1.setUsername("user1");
+		user1.setPassword("password");
+		user1.setEmail("user1@mail.com");
+		
+		User user2 = new User();
+		user2.setUsername("user2");
+		user2.setPassword("password");
+		user2.setEmail("user2@mail.com");
+		
+		User otherUser = new User();
+		otherUser.setUsername("otherUser");
+		otherUser.setPassword("password");
+		otherUser.setEmail("otherUser@mail.com");
+		
+		
+		List<User> allUsers = Arrays.asList(user, user1, user2, otherUser);
+		
+		Mockito.when(userRepo.findAll())
+			.thenReturn(allUsers);
+		
+		List<String> result = 
+				userService.findUsernamesWithClosestLevenshteinDistance("wser", 2);
+		
+		assertThat(result)
+			.containsOnly("user1", "user2", "user");
 	}
 
 }

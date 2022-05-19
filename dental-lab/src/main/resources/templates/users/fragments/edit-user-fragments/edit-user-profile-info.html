@@ -3,9 +3,8 @@
 
 <body>
 
-	<div th:fragment="new-user-form" th:remove="tag">
-		<h3 class="h3 mt-5">Crear nuevo Usuario</h3>
-		<form class="mt-5" th:object="${newUser}" method="post" th:action="@{/admin/users/add}">
+	<div th:fragment="edit-user-profile-info-form" th:remove="tag">
+		<form class="mt-5" th:object="${userEdited}" method="post" th:action="@{/admin/users/edit(user_id=${userId})}">
 			<div class="row">
 				<div class="col-md-6 mb-3">
 					<label for="username" class="form-label">Nombre de usuario</label>
@@ -29,37 +28,7 @@
 					<div id="confirmPasswordHelp" class="form-text">Las Contrace&ntilde;as deben coincidir</div>
 				</div>
 			</div>
-			<!-- Adding Roles -->
-			<div class="div mt-4 mb-3">
-				<h5 class="h5 mb-2">Elegir Roles</h5>
-				<div class="form-check">
-					<input 
-						class="form-check-input" 
-						type="checkbox" 
-						th:value="ROLE_USER" 
-						th:id="ROLE_USER"
-						checked
-						disabled>
-					<label 
-						class="form-check-label" 
-						th:for="ROLE_USER" 
-						th:text="'Rol Usuario'"></label>
-				</div>
-				<th:block th:each="role : ${roles}" th:if="${#strings.equals(role, 'ROLE_USER') == false}">
-					<div class="form-check">
-						<input 
-							class="form-check-input" 
-							type="checkbox" 
-							th:value="${role}" 
-							th:field="*{roles}"
-							th:id="${role}">
-						<label 
-							class="form-check-label" 
-							th:for="${role}" 
-							th:text="${role.nameInSpanish}"></label>
-					</div>
-				</th:block>
-			</div>
+			
 			<hr/>
 			<div class="row mt-5">
 				<div class="col-md-6 mb-3">

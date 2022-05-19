@@ -12,11 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import com.dental.lab.model.payloads.CreateUserFormPayload;
 
 /**
  * There are different types of Users:
@@ -67,14 +66,17 @@ public class User {
 			inverseJoinColumns = @JoinColumn(name = "authority_id"))
 	private Set<Authority> authorities = new HashSet<>();
 	
-	@ManyToMany(cascade = {
-			CascadeType.PERSIST,
-			CascadeType.MERGE
-	})
-	@JoinTable(name = "User_has_Address",
-			joinColumns = @JoinColumn(name = "User_id"),
-			inverseJoinColumns = @JoinColumn(name = "Address_id"))
+	@OneToMany(
+			mappedBy = "user",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
 	private Set<Address> addresses = new HashSet<>();
+	
+	@OneToMany(
+			mappedBy = "user",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private Set<Phone> phones = new HashSet<>();
 	
 	public User() {}
 	
@@ -89,18 +91,6 @@ public class User {
 		this.lastName = lastName;
 		this.secondLastName = secondLastName;
 	}
-
-	public static User buildWithoutAuthorities(CreateUserFormPayload userPayload) {
-		
-		return new User(
-				userPayload.getUsername(),
-				userPayload.getPassword(),
-				userPayload.getEmail(),
-				userPayload.getFirstName(),
-				userPayload.getSecondName(),
-				userPayload.getLastName(),
-				userPayload.getSecondLastName());
-	}
 	
 	public void addAuthority(Authority authority) {
 		authorities.add(authority);
@@ -110,16 +100,6 @@ public class User {
 	public void removeAuthority(Authority authority) {
 		authorities.remove(authority);
 		authority.getUsers().remove(this);
-	}
-	
-	public void addAddress(Address newAddress) {
-		this.addresses.add(newAddress);
-		newAddress.getUsers().add(this);
-	}
-	
-	public void removeAddress(Address address) {
-		this.addresses.remove(address);
-		address.getUsers().remove(this);
 	}
 
 	public Long getId() {
@@ -189,9 +169,17 @@ public class User {
 	public void setSecondLastName(String secondLastName) {
 		this.secondLastName = secondLastName;
 	}
+	
+	public String getfullLastName() {
+		return lastName + " " + secondLastName;
+	}
 
 	public Set<Address> getAddresses() {
 		return addresses;
+	}
+
+	public void setAddresses(Set<Address> addresses) {
+		this.addresses = addresses;
 	}
 
 	@Override

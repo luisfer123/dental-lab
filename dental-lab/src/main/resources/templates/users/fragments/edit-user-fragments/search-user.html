@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<!-- Fragment with Search User form -->
+	<div th:fragment="search-user-form" th:remove="tag">
+		<div class="col-md-8 mt-5">
+			<div class="card">
+				<div class="card-body mx-auto">
+					<h3 class="h3 mt-5 mb-5 text-center">Buscar Usuario</h3>
+					<form th:object="${userSearchPayload}" th:action="@{/admin/users/search}" method="post" class="row g-3 text-center search-form">
+						<div class="row text">				
+							<div class="col-auto">
+								Buscar por:
+							</div>
+							<div class="col-auto">
+								<select th:field="*{searchBy}" th:name="searchBy" class="form-select form-select-sm" aria-label="Default select example">
+									<option value="fullLastName">Apellido</option>
+									<option value="email">Correo electr&oacute;nico</option>
+									<option value="username">Nombre de usuario</option>
+								</select>
+							</div>
+						</div>
+						<div class="row mt-5">
+							<div class="col-8">
+								<label for="searchKeyword" class="visually-hidden"></label>
+								<input 
+									th:name="searchKeyword"
+									th:field="*{searchKeyword}"
+									type="text" 
+									class="form-control" 
+									id="searchKeyword" 
+									placeholder="Palabra clave">
+								<div th:if="${#fields.hasErrors('searchKeyword')}" class="alert alert-warning" role="alert">
+									<p th:each="err : ${#fields.errors('searchKeyword')}" th:text="${err}"> </p>
+								</div>
+							</div>
+							<div class="col-4">
+								<button type="submit" class="btn btn-primary mb-3">Buscar</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Fragment with Search results  -->
+	<div th:fragment="search-user-suggestions" th:remove="tag">
+		<div th:if="${usersFound != null and !usersFound.empty}" class="container">
+			<h5 class="h5 mt-5 mb-5 text-center">Usuarios encontrados</h5>
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Nombre de usuario</th>
+						<th scope="col">Nombre</th>
+						<th scope="col">Apellido</th>
+						<th scope="col">Correo electr&oacute;nico</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${usersFound}">
+						<th><a class="link-dark" 
+								style="text-decoration: none"
+								th:href="@{/admin/users/edit(user_id=${user.id})}" 
+								th:text="${user.username}"></a></th>
+						<td th:text="${user.firstName + ' ' + user.secondName}"></td>
+						<td th:text="${user.lastName + ' ' + user.secondLastName}"></td>
+						<td th:text="${user.email}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<!-- Fragment with Search Suggestions  -->
+	<div th:fragment="search-user-suggestions" th:remove="tag">
+		<div th:if="${similarUsers != null and !similarUsers.empty}" class="container">
+			<h5 class="h5 mt-5 mb-5 text-center">Sugerencias de usuarios</h5>
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Nombre de usuario</th>
+						<th scope="col">Nombre</th>
+						<th scope="col">Apellido</th>
+						<th scope="col">Correo electr&oacute;nico</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${similarUsers}">
+						<th scope="row" th:text="${user.username}"></th>
+						<td th:text="${user.firstName + ' ' + user.secondName}"></td>
+						<td th:text="${user.lastName + ' ' + user.secondLastName}"></td>
+						<td th:text="${user.email}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</body>
+</html>

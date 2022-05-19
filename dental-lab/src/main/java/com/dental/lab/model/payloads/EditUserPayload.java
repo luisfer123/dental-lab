@@ -1,10 +1,8 @@
 package com.dental.lab.model.payloads;
 
-import java.util.List;
-
 import com.dental.lab.model.entities.User;
 
-public class CreateUserFormPayload {
+public class EditUserPayload {
 
 	private String username;
 
@@ -21,11 +19,36 @@ public class CreateUserFormPayload {
 	private String lastName;
 
 	private String secondLastName;
+	
+	public EditUserPayload() {
+		super();
+	}
 
-	private List<String> roles;
-
-	public User asUserWithoutAuthorities() {
-		return new User(username, password, email, firstName,
+	public EditUserPayload(String username, String password, String email, String firstName,
+			String secondName, String lastName, String secondLastName) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.email = email;
+		this.firstName = firstName;
+		this.secondName = secondName;
+		this.lastName = lastName;
+		this.secondLastName = secondLastName;
+	}
+	
+	public static EditUserPayload buildFromUser(User user) {
+		return new EditUserPayload(
+				user.getUsername(), 
+				user.getPassword(), 
+				user.getEmail(), 
+				user.getFirstName(),
+				user.getSecondName(), 
+				user.getLastName(), 
+				user.getSecondLastName());
+	}
+	
+	public User asUser() {
+		return new User(username, password, email, firstName, 
 				secondName, lastName, secondLastName);
 	}
 
@@ -43,6 +66,14 @@ public class CreateUserFormPayload {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
 	}
 
 	public String getEmail() {
@@ -85,26 +116,4 @@ public class CreateUserFormPayload {
 		this.secondLastName = secondLastName;
 	}
 
-	public List<String> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
-
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
-
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
-
-	@Override
-	public String toString() {
-		return "CreateUserFormPayload [username=" + username + ", password=" + password + ", confirmPassword="
-				+ confirmPassword + ", email=" + email + ", firstName=" + firstName + ", secondName=" + secondName
-				+ ", lastName=" + lastName + ", secondLastName=" + secondLastName + ", roles=" + roles + "]";
-	}
 }
