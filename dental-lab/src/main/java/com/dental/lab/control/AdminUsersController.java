@@ -156,11 +156,17 @@ public class AdminUsersController {
 	
 	@PostMapping(path = "/edit")
 	public ModelAndView editUser(
-			@ModelAttribute("userEdited") EditUserPayload userEdited, 
+			@Valid @ModelAttribute("userEdited") EditUserPayload userEdited,
+			BindingResult result,
 			@RequestParam("user_id") Long userId,
 			ModelMap model) {
 		
 		userService.saveEditedUser(userEdited, userId);
+		
+		if(result.hasErrors())
+			result.getAllErrors().forEach(err -> {
+				System.out.println(err.getDefaultMessage());
+			});
 		
 		return new ModelAndView("users/admin-edit-user");
 	}

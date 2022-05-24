@@ -382,4 +382,16 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existsByEmail(String email) {
+		return userRepo.existsByEmail(email);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existsByUsername(String username) {
+		return userRepo.existsByUsername(username);
+	}
+	
 }

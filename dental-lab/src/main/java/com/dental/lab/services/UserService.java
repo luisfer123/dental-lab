@@ -164,5 +164,9 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> findSimilarUsersByEmail(String email, int maxDistance);
+	
+	boolean existsByEmail(String email);
+	
+	boolean existsByUsername(String username);
 
 }

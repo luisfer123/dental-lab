@@ -1,15 +1,38 @@
 package com.dental.lab.model.payloads;
 
-import com.dental.lab.model.entities.User;
+import javax.persistence.Persistence;
+import javax.validation.GroupSequence;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.xml.crypto.Data;
 
+import org.hibernate.type.Type;
+
+import com.dental.lab.model.entities.User;
+import com.dental.lab.model.validation.FieldMatch;
+
+@GroupSequence({
+	Type.class, 
+	Data.class, 
+	Persistence.class, 
+	EditUserPayload.class})
+@FieldMatch(
+		groups = Data.class, 
+		first = "password", 
+		second = "confirmPassword", 
+		message = "The Password and Confirm Password fields must match.")
 public class EditUserPayload {
 
+	@NotBlank
 	private String username;
 
+	@NotBlank
 	private String password;
 
 	private String confirmPassword;
 
+	@Email
+	@NotBlank
 	private String email;
 
 	private String firstName;
