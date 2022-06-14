@@ -101,6 +101,16 @@ public class User {
 		authorities.remove(authority);
 		authority.getUsers().remove(this);
 	}
+	
+	/**
+	 * All Users must have at least the ROLE_USER authority, when
+	 * using this method, should be careful to add at least ROLE_USER
+	 * again
+	 */
+	public void removeAllAuthorities() {
+		authorities.forEach(auth -> auth.getUsers().remove(this));
+		authorities = new HashSet<>();
+	}
 
 	public Long getId() {
 		return id;

@@ -5,7 +5,7 @@
 
 	<!-- Fragment with Search User form -->
 	<div th:fragment="search-user-form" th:remove="tag">
-		<div class="col-md-8 mt-5">
+		<div class="col-md mt-5">
 			<div class="card">
 				<div class="card-body mx-auto">
 					<h3 class="h3 mt-5 mb-5 text-center">Buscar Usuario</h3>
@@ -47,55 +47,76 @@
 	</div>
 	
 	<!-- Fragment with Search results  -->
-	<div th:fragment="search-user-suggestions" th:remove="tag">
-		<div th:if="${usersFound != null and !usersFound.empty}" class="container">
-			<h5 class="h5 mt-5 mb-5 text-center">Usuarios encontrados</h5>
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">Nombre de usuario</th>
-						<th scope="col">Nombre</th>
-						<th scope="col">Apellido</th>
-						<th scope="col">Correo electr&oacute;nico</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="user : ${usersFound}">
-						<th><a class="link-dark" 
-								style="text-decoration: none"
-								th:href="@{/admin/users/edit(user_id=${user.id})}" 
-								th:text="${user.username}"></a></th>
-						<td th:text="${user.firstName + ' ' + user.secondName}"></td>
-						<td th:text="${user.lastName + ' ' + user.secondLastName}"></td>
-						<td th:text="${user.email}"></td>
-					</tr>
-				</tbody>
-			</table>
+	<div th:fragment="search-user-result" th:remove="tag">
+		<div th:if="${usersFound != null and !usersFound.empty}" class="mt-5 mb-5">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="h5 mt-5 mb-5 text-center">Usuarios encontrados</h5>
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Nombre de usuario</th>
+								<th scope="col">Nombre</th>
+								<th scope="col">Apellido</th>
+								<th scope="col">Correo electr&oacute;nico</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user : ${usersFound}">
+								<th><a class="link-dark" 
+										style="text-decoration: none"
+										th:href="@{/admin/users/edit(user_id=${user.id})}" 
+										th:text="${user.username}"></a></th>
+								<td th:text="${(user.firstName ?: '') + ' ' + (user.secondName ?: '')}"></td>
+								<td th:text="${(user.lastName ?: '') + ' ' + (user.secondLastName ?: '')}"></td>
+								<td th:text="${user.email}"></td>
+								<td><a th:href="@{/admin/users/edit(user_id=${user.id})}"class="badge bg-light text-dark text-decoration-none" style="">Editar</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 	
 	<!-- Fragment with Search Suggestions  -->
 	<div th:fragment="search-user-suggestions" th:remove="tag">
-		<div th:if="${similarUsers != null and !similarUsers.empty}" class="container">
-			<h5 class="h5 mt-5 mb-5 text-center">Sugerencias de usuarios</h5>
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">Nombre de usuario</th>
-						<th scope="col">Nombre</th>
-						<th scope="col">Apellido</th>
-						<th scope="col">Correo electr&oacute;nico</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="user : ${similarUsers}">
-						<th scope="row" th:text="${user.username}"></th>
-						<td th:text="${user.firstName + ' ' + user.secondName}"></td>
-						<td th:text="${user.lastName + ' ' + user.secondLastName}"></td>
-						<td th:text="${user.email}"></td>
-					</tr>
-				</tbody>
-			</table>
+		<div th:if="${similarUsers != null and !similarUsers.empty}" class="mt-5 mb-5">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="h5 mt-5 mb-5 text-center">Sugerencias de usuarios</h5>
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Nombre de usuario</th>
+								<th scope="col">Nombre</th>
+								<th scope="col">Apellido</th>
+								<th scope="col">Correo electr&oacute;nico</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user : ${similarUsers}">
+								<th scope="row" th:text="${user.username}"></th>
+								<td th:text="${(user.firstName ?: '') + ' ' + (user.secondName ?: '')}"></td>
+								<td th:text="${(user.lastName ?: '') + ' ' + (user.secondLastName ?: '')}"></td>
+								<td th:text="${user.email}"></td>
+								<td><a th:href="@{/admin/users/edit(user_id=${user.id})}"class="badge bg-light text-dark text-decoration-none" style="">Editar</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- To show if neither User were found nor suggestions were returned -->
+	<div th:fragment="search-user-noresult" th:remove="tag">
+		<div th:if="${userNotFound == true}" class="mt-5 mb-5">
+			<div class="card">
+				<div class="card-body">
+					Nor results
+				</div>
+			</div>
 		</div>
 	</div>
 

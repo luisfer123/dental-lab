@@ -32,6 +32,19 @@ public interface UserService {
 	 */
 	User findByUsernameWithAuthorities(String username) throws UsernameNotFoundException;
 	
+	/**
+	 * Finds the {@linkplain User} entity with {@code User.id} equal to the 
+	 * parameter {@code userId}. {@code User.authorities} property is set with
+	 * all the corresponding Authority entities. {@code User.id} is supposed to have an 
+	 * unique constrain in the database.
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws UserNotFoundException If no user with {@code id} equal to 
+	 * {@code userId} is found in database.
+	 */
+	User findByIdWithAuthorities(Long userId) throws UserNotFoundException;
+	
 	User findById(Long id) throws UserNotFoundException;
 	
 	List<User> findAll();
@@ -54,7 +67,7 @@ public interface UserService {
 	 * {@linkplain EAuthority} constant.
 	 */
 	User saveNewUser(CreateUserFormPayload userPayload) throws AuthorityNotFoundException;
-	
+		
 	User saveEditedUser(EditUserPayload userEdited, Long userId) throws UserNotFoundException;
 
 	/**

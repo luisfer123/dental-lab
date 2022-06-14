@@ -3,7 +3,6 @@ package com.dental.lab.control;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dental.lab.exceptions.UserNotFoundException;
 import com.dental.lab.model.entities.User;
@@ -30,8 +28,6 @@ import com.dental.lab.model.enums.EAuthority;
 import com.dental.lab.model.payloads.CreateUserFormPayload;
 import com.dental.lab.model.payloads.EditUserPayload;
 import com.dental.lab.model.payloads.UserSearchPayload;
-import com.dental.lab.services.AddressService;
-import com.dental.lab.services.PhoneService;
 import com.dental.lab.services.UserService;
 
 @Controller
@@ -40,12 +36,6 @@ public class AdminUsersController {
 	
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private AddressService addressService;
-	
-	@Autowired
-	private PhoneService phoneService;
 	
 	@RequestMapping(path = "/all")
 	@PreAuthorize("hasRole('ADMIN')")
@@ -105,7 +95,7 @@ public class AdminUsersController {
 		return new ModelAndView("users/admin-users", model);
 	}
 	
-	@RequestMapping(path = "/add")
+	@GetMapping(path = "/add")
 	public ModelAndView goAddUserForm(ModelMap model) {
 				
 		model.addAttribute("newUser", new CreateUserFormPayload());
@@ -115,43 +105,29 @@ public class AdminUsersController {
 	}
 	
 	@PostMapping(path = "/add")
-	public ModelAndView addUser(
-			@ModelAttribute("newUser") CreateUserFormPayload newUserPayload, ModelMap model) {
+	public ModelAndView addNewUser(
+			@Valid @ModelAttribute("newUser") CreateUserFormPayload newUserPayload,
+			BindingResult result,
+			ModelMap model) {
 		
+		
+		if(!newUserPayload.getPassword().equals(newUserPayload.getConfirmPassword())) {
+			result.rejectValue(
+					"confirmPassword", 
+					"error.newUserPayload", 
+					"Contraceña y confirmar contraceña deben coincidir");
+		}
+		
+		if(result.hasErrors()) {
+			System.out.println("has errors");
+			model.addAttribute("roles", EAuthority.values());
+			model.mergeAttributes(result.getModel());
+			return new ModelAndView("users/add-user", model);
+		}
+
 		userService.saveNewUser(newUserPayload);
 		
 		return new ModelAndView("redirect:/admin/users/add");
-	}
-	
-	@GetMapping(path = "/edit")
-	public ModelAndView goEditUser(
-			@RequestParam("user_id") Optional<Long> optUserId,
-			RedirectAttributes redirectAttrs ,ModelMap model) {
-		
-		Long userId;
-		User user = new User();
-		
-		//Check whether the id parameter is included in the request
-		try {
-			userId = optUserId.get();
-		} catch(NoSuchElementException e) {
-			return new ModelAndView("redirect:/admin/users/search");
-		}
-		
-		// Try to find an User in the database with the passed id parameter
-		try {
-			user = userService.findById(userId);
-		} catch(UserNotFoundException e) {
-			return new ModelAndView("redirect:/admin/users/search");
-		}
-				
-		model.addAttribute("userEdited", EditUserPayload.buildFromUser(user));
-		model.addAttribute("addresses", addressService.getByUser(user));
-		model.addAttribute("phones", phoneService.findByUser(user));
-		model.addAttribute("userId", userId);
-		
-		return new ModelAndView("users/admin-edit-user");
-		
 	}
 	
 	@PostMapping(path = "/edit")
@@ -171,6 +147,23 @@ public class AdminUsersController {
 		return new ModelAndView("users/admin-edit-user");
 	}
 	
+	/**
+	 * Search for the Users matching the given criteria.
+	 * If at least one User is found satisfying the search criteria, Users found
+	 * are added to the model in the {@code usersFound} model attribute.<br>
+	 * If no {@code User} satisfies the search criteria,  Levenshtein distance
+	 * will be used to return a list of the closest matches. Closest matches for 
+	 * searched keyword are added in the {@code similarUsers} model attribute.<br>
+	 * When neither {@linkplain User}s match the search criteria nor similar {@linkplain Users}s
+	 * are found, a boolean attribute named userNotFound is returned instead.
+	 * 
+	 * @param userSearchPayload - Contains two fields: {@code searchBy} and {@code searchKeyword}
+	 * searchBy must be one field's name of the {@linkplain User} entity. For example
+	 * we could have: {@code searchBy = "username"} and {@code searchKeyword = "jhon"}.
+	 * @param result result of validation
+	 * @param model
+	 * @return
+	 */
 	@PostMapping(path = "/search")
 	public ModelAndView searchUser(
 			@Valid @ModelAttribute("userSearchPayload") UserSearchPayload userSearchPayload,
@@ -182,19 +175,20 @@ public class AdminUsersController {
 		}
 		
 		List<User> usersFound = new ArrayList<>();
+		List<User> similarUsers = new ArrayList<>();
 				
 		switch(userSearchPayload.getSearchBy()) {
 		case "fullLastName":
-			try {
-				usersFound = userService.findByFullLastName(
-						userSearchPayload.getSearchKeyword());
+			usersFound = userService.findByFullLastName(userSearchPayload.getSearchKeyword());
 				
-				// Just to execute the catch block in case no users with such last name were found
-				if(usersFound == null || usersFound.isEmpty())
-					throw new RuntimeException();
-			} catch(Exception e) {
-				model.addAttribute("similarUsers",
-						userService.findSimilarUsersByFullLastName(userSearchPayload.getSearchKeyword(), 3));
+			if(usersFound == null || usersFound.isEmpty()) {
+				similarUsers = userService.findSimilarUsersByFullLastName(
+						userSearchPayload.getSearchKeyword(), 3);
+				if(similarUsers != null && !similarUsers.isEmpty()) {
+					model.addAttribute("similarUsers", similarUsers);
+				} else {
+					model.addAttribute("userNotFound", true);
+				}
 				return new ModelAndView("users/admin-user-search", model);
 			}
 			break;
@@ -203,9 +197,13 @@ public class AdminUsersController {
 				usersFound = Arrays.asList(
 						userService.findByUsername(userSearchPayload.getSearchKeyword()));
 			} catch(UserNotFoundException e) {
-				model.addAttribute("similarUsers",
-						userService.findSimilarUsersByUsername(
-								userSearchPayload.getSearchKeyword(), 3));
+				similarUsers = userService.findSimilarUsersByUsername(
+						userSearchPayload.getSearchKeyword(), 3);
+				if(similarUsers != null && !similarUsers.isEmpty()) {
+					model.addAttribute("similarUsers", similarUsers);
+				} else {
+					model.addAttribute("userNotFound", true);
+				}
 				return new ModelAndView("users/admin-user-search", model);
 			}
 			break;
@@ -214,9 +212,13 @@ public class AdminUsersController {
 				usersFound = Arrays.asList(
 						userService.findByEmail(userSearchPayload.getSearchKeyword()));
 			} catch(UserNotFoundException e) {
-				model.addAttribute("similarUsers",
-						userService.findSimilarUsersByEmail(
-								userSearchPayload.getSearchKeyword(), 5));
+				similarUsers = userService.findSimilarUsersByEmail(
+						userSearchPayload.getSearchKeyword(), 5);
+				if(similarUsers != null && !similarUsers.isEmpty()) {
+					model.addAttribute("similarUsers", similarUsers);
+				} else {
+					model.addAttribute("userNotFound", true);
+				}
 				return new ModelAndView("users/admin-user-search", model);
 			}
 			break;

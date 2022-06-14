@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="edit-user-personal-info-form" th:remove="tag">
+		<div class="card mb-2">
+			<div class="card-body">
+				<h4 class="h4 text-center">Informaci&oacute;n personal</h4>
+			</div>
+		</div>
+		<div class="card mb-4">
+			<div class="card-body">
+				<!-- Update name form -->
+				<form method="post" th:action="@{/admin/users/edit/name(user_id=${userId})}">
+					<div class="row">
+						<div class="col-md-6">
+							<label for="firstName" class="form-label">Primer Nombre</label>
+	  						<input 
+	  							type="text" 
+	  							class="form-control" 
+	  							id="firstName" 
+	  							placeholder=""
+	  							name="firstName"
+	  							th:value="${user.firstName}">
+						</div>
+						<div class="col-md-6">
+							<label for="secondName" class="form-label">Segundo Nombre</label>
+	  						<input 
+	  							type="text" 
+	  							class="form-control" 
+	  							id="secondName" 
+	  							name="secondName"
+	  							th:value="${user.secondName}"
+	  							placeholder="">
+						</div>
+					</div>
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label for="lastName" class="form-label">Apellido paterno</label>
+	  						<input 
+	  							type="text" 
+	  							class="form-control" 
+	  							id="lastName" 
+	  							name="lastName"
+	  							th:value="${user.lastName}"
+	  							placeholder="">
+						</div>
+						<div class="col-md-6">
+							<label for="secondLastName" class="form-label">Apellido materno</label>
+	  						<input 
+	  							type="text" 
+	  							class="form-control" 
+	  							id="secondLastName" 
+	  							name="secondLastName"
+	  							th:value="${secondLastName}"
+	  							placeholder="">
+						</div>
+					</div>
+					<div class="mt-4">
+						<button type="submit" class="btn btn-primary">Guardar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

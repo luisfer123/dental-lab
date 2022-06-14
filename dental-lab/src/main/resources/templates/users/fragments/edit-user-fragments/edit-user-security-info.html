@@ -4,7 +4,140 @@
 <body>
 
 	<div th:fragment="edit-user-security-info-form" th:remove="tag">
-		
+		<div class="card mb-2">
+			<div class="card-body">
+				<h4 class="h4 text-center">Credenciales y seguridad</h4>
+			</div>
+		</div>
+		<div class="card mb-4">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<!-- Update username form -->
+						<form method="post" th:action="@{/admin/users/edit/username(user_id=${userId})}">
+							<p>Nombre de usuario<p>
+							<div class="input-group mb-3">
+								<input 
+									id="username" 
+									name="username"
+									type="text" 
+									class="form-control" 
+									placeholder=""
+									th:value="${user.username}" 
+									aria-describedby="button-username">
+				  				<button class="btn btn-primary" type="submit" id="button-username">Guardar</button>
+							</div>
+							<div th:if="${invalidUsername ne null and invalidUsername.get('username') ne null and !invalidUsername.get('username').isEmpty()}" class="alert alert-warning" role="alert">
+								<div th:each="err : ${invalidUsername.get('username')}" th:text="${err}"> </div>
+							</div>
+						</form>
+					</div>
+					<div class="col-md-6 mb-3">
+						<!-- Update email form -->
+						<form method="post" th:action="@{/admin/users/edit/email(user_id=${userId})}">
+							<p>Correo electr&oacute;nico<p>
+							<div class="input-group mb-3">
+								<input 
+									id="email" 
+									name="email"
+									type="text" 
+									class="form-control" 
+									placeholder="" 
+									th:value="${user.email}"
+									aria-describedby="button-email">
+				  				<button class="btn btn-primary" type="submit" id="button-email">Guardar</button>
+							</div>
+							<div th:if="${invalidEmail ne null and invalidEmail.get('email') ne null and !invalidEmail.get('email').isEmpty()}" class="alert alert-warning" role="alert">
+								<div th:each="err : ${invalidEmail.get('email')}" th:text="${err}"> </div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-md-6">
+						<!-- Update password form -->
+						<form  method="post" th:action="@{/admin/users/edit/password(user_id=${userId})}">
+							<div class="mb-3">
+								<label for="currentPassword" class="form-label">Contrace&ntilde;a actual</label>
+								<input 
+									type="password" 
+									id="currentPassword" 
+									class="form-control"
+									name="currentPassword">
+							</div>
+							<div th:if="${invalidPassword ne null and invalidPassword.get('currentPassword') ne null and !invalidPassword.get('currentPassword').isEmpty()}" class="alert alert-warning" role="alert">
+								<div th:each="err : ${invalidPassword.get('currentPassword')}" th:text="${err}"> </div>
+							</div>
+							<div class="mb-3">
+								<label for="newPassword" class="form-label">Nueva contrace&ntilde;a</label>
+								<input 
+									type="password" 
+									id="newPassword" 
+									class="form-control"
+									name="newPassword">
+							</div>
+							<div th:if="${invalidPassword ne null and invalidPassword.get('newPassword') ne null and !invalidPassword.get('newPassword').isEmpty()}" class="alert alert-warning" role="alert">
+								<div th:each="err : ${invalidPassword.get('newPassword')}" th:text="${err}"> </div>
+							</div>
+							<div class="mb-3">
+								<label for="confirmNewPassword" class="form-label">Repetir nueva contrace&ntilde;a</label>
+								<input 
+									type="password" 
+									class="form-control" 
+									id="confirmNewPassword" 
+									name="confirmNewPassword"
+									aria-describedby="confirmPasswordHelp">
+								<div id="confirmPasswordHelp" class="form-text">Las contrace&ntilde;as deben coincidir.</div>
+							</div>
+							<div th:if="${invalidPassword ne null and invalidPassword.get('confirmNewPassword') ne null and !invalidPassword.get('confirmNewPassword').isEmpty()}" class="alert alert-warning" role="alert">
+								<div th:each="err : ${invalidPassword.get('confirmNewPassword')}" th:text="${err}"> </div>
+							</div>
+							<button type="submit" class="btn btn-primary">Guardar</button>
+						</form>
+					</div>
+					<div class="col-md-6 d-flex justify-content-center">
+						<!-- Update roles form -->
+						<form method="post" th:action="@{/admin/users/edit/roles(user_id=${userId})}">
+							<!-- Adding Roles -->
+							<div class="div mt-4 mb-3">
+								<h5 class="h5 mb-4">Elegir Roles</h5>
+								<div class="form-check">
+									<input 
+										class="form-check-input" 
+										type="checkbox" 
+										th:value="ROLE_USER" 
+										th:id="ROLE_USER"
+										name="selectedRoles"
+										checked
+										disabled>
+									<label 
+										class="form-check-label" 
+										th:for="ROLE_USER" 
+										th:text="'Rol Usuario'"></label>
+								</div>
+								<th:block th:each="role : ${roles}" th:if="${#strings.equals(role, 'ROLE_USER') == false}">
+									<div class="form-check">
+										<input 
+											class="form-check-input" 
+											type="checkbox" 
+											th:value="${role}" 
+											th:id="${role}"
+											name="selectedRoles"
+											th:checked="${#sets.contains(currentRoles, role)}">
+										<label 
+											class="form-check-label" 
+											th:for="${role}" 
+											th:text="${role.nameInSpanish}"></label>
+									</div>
+								</th:block>
+								<button type="submit" class="btn btn-primary mt-3">Guardar</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </body>

@@ -79,14 +79,33 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public User findByUsernameWithAuthorities(String username) 
+	public User findByUsernameWithAuthorities(String username)
 			throws UsernameNotFoundException {
 		
 		User user = userRepo.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " does not exists!"));
 		
-		Set<Authority> authorities = authRepo.findUserAuthoritesByUsername(username);
+		Set<Authority> authorities =
+				authRepo.findUserAuthoritesByUsername(username);
 		authorities.forEach(authority -> user.addAuthority(authority));
+		
+		return user;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public User findByIdWithAuthorities(Long userId)
+			throws UserNotFoundException {
+		
+		User user = userRepo.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException("User with id " + userId + " was not found."));
+		
+		Set<Authority> authorities =
+				authRepo.findUserAuthoritesByUsername(user.getUsername());
+		authorities.forEach(auth -> user.addAuthority(auth));
 		
 		return user;
 	}
@@ -151,7 +170,7 @@ public class UserServiceImpl implements UserService {
 			query.select(root).where(cb.equal(root.get("lastName"), firstLastName));
 		}
 		
-		else if(hasFirst) {
+		else if(hasSecond) {
 			query.select(root).where(cb.equal(root.get("secondLastName"), secondLastName));
 		}
 		

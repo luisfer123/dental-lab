@@ -20,7 +20,7 @@ public class UniqueUsernameValidator
 			return true;
 		
 		return username != null
-				&& userService.existsByUsername(username);
+				&& !userService.existsByUsername(username);
 	}
 
 }

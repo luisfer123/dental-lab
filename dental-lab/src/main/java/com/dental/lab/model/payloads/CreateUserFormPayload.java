@@ -2,16 +2,29 @@ package com.dental.lab.model.payloads;
 
 import java.util.List;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import com.dental.lab.model.entities.User;
+import com.dental.lab.model.validation.UniqueEmail;
+import com.dental.lab.model.validation.UniqueUsername;
 
 public class CreateUserFormPayload {
 
+	@NotBlank(message = "Este campo no puede esta vacío")
+	@UniqueUsername(message = "Nombre de usuario no disponible")
+	@Size(min = 3, message = "El nombre de usuario debe contener al menos 3 caracteres")
 	private String username;
-
+	
+	@NotBlank(message = "Este campo no puede esta vacío")
 	private String password;
 
+	@NotBlank(message = "Este campo no puede esta vacío")
 	private String confirmPassword;
 
+	@Email(message = "Introduce una dirección de correo electrónico válido")
+	@UniqueEmail(message = "Correo electrónico ya fue registrado por otro usuario")
 	private String email;
 
 	private String firstName;
@@ -23,6 +36,10 @@ public class CreateUserFormPayload {
 	private String secondLastName;
 
 	private List<String> roles;
+
+	public CreateUserFormPayload() {
+		super();
+	}
 
 	public User asUserWithoutAuthorities() {
 		return new User(username, password, email, firstName,

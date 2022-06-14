@@ -4,28 +4,27 @@
 <body>
 
 	<div th:fragment="categories-list" th:remove="tag">
-		<h2 class="h2 m-3 mb-5 text-center">Categorias:</h2>
-
-		<div class="container">
-
-			<nav aria-label="breadcrumb">
-				<ol class="breadcrumb">
-					<li th:each="c : ${categoryPath}" class="breadcrumb-item"><a
-						th:text="${c.name}" th:href="@{/products/list?category_id=} + ${c.id}" style="text-decoration: none;"></a></li>
-				</ol>
-			</nav>
-
-			<table class="table mt-5">
-				<tbody>
-					<tr th:each="category : ${categories}">
-						<th><a style="text-decoration: none;"
-							th:href="@{/products/list?category_id=} + ${category.id}"
-							th:text="${category.name}" class="link"></a></th>
-					</tr>
-				</tbody>
-			</table>
+		<div class="card mt-5">
+			<div class="card-body">
+				<h4 class="h4 m-3 mb-5 text-center">Categorias:</h4>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li th:each="c : ${categoryPath}" class="breadcrumb-item"><a
+							th:text="${c.name}" th:href="@{/products/list?category_id=} + ${c.id}" style="text-decoration: none;"></a></li>
+					</ol>
+				</nav>
+	
+				<table class="table table-borderless mt-5">
+					<tbody>
+						<tr th:each="category : ${categories}">
+							<th><a style="text-decoration: none;"
+								th:href="@{/products/list?category_id=} + ${category.id}"
+								th:text="${category.name}" class="link"></a></th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
-
 	</div>
 
 </body>
