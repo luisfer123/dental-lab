@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<base th:replace="fragments/bootstrap::head"/>
+
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+		// ============= To change Product Category Form ===========================
+		
+		requestRootCategory();
+
+		$("#showSubCategoriesButton").click(function() {
+			var data = $('#showCategoriesForm').serializeArray();
+			// call requestCategoryChildren() function only if one category was selected
+			if(data.find(element => element.name === 'parentCategoryId')) {
+				requestCategoriesChildren(data);
+			}
+		});
+		
+		$("#chooseCategoryButton").click(function() {
+			var dataForm = $('#showCategoriesForm').serializeArray();
+			
+			var token = $("meta[name='_csrf']").attr("content");
+			
+			// Check if one category was selected
+			if(dataForm.find(element => element.name === 'parentCategoryId')) {
+				$.ajax({
+					url: '/admin/products/category',
+					type: 'post',
+					dataType: 'json',
+					data: dataForm,
+					headers: {
+						"X-CSRF-TOKEN": token
+					},
+					success: function(response) {
+						// Reload the page to actualize data
+						location.reload();
+					},
+					error: function(err) {
+						console.log(err);
+					}
+				});
+			}
+		});
+		
+		
+	});
+	
+	// ============= To change Product Category Form ===========================
+	
+	function showCategories(categoriesWrapper) {
+		
+		$('#showCategoryPathContainer').children('li').remove();
+		
+		$.each(categoriesWrapper.parentCategoryPath, function(index, category) {
+			$('#showCategoryPathContainer').append(
+				'<li class="breadcrumb-item">' +
+					'<a onclick="event.preventDefault(); returnParentCategoryLink(' + category.id + ')" class="returnParentCategoryLink" href="#" style="text-decoration: none;">' + category.name + '</a></li>'
+			);
+		});
+		
+		// First dlete radio buttons that are currently in the form.
+		$('#showCategoriesForm').children('div').remove();
+		
+		$.each(categoriesWrapper.childrenCategories, function(index, category) {
+			$('#showCategoriesForm').append(
+				'<div class="custom-control custom-radio">' +
+					'<input class="custom-control-input mx-2" type="radio" name="parentCategoryId" id="category' + category.id + '" value="' + category.id + '">' +
+					'<label class="custom-control-label" for="category' + category.id + '">' + category.name + '</label>' +
+				'</div>'
+			);
+		});
+		
+	}
+	
+	function returnParentCategoryLink(categoryId) {
+		requestCategoriesChildren({parentCategoryId: categoryId})
+	}
+	
+	function requestRootCategory() {
+		$.ajax({
+			url: '/api/v1/categories/root',
+			type: 'get',
+			dataType: 'json',
+			
+			success: function(response) {
+				// Use showCategories function to show the root category returned
+				showCategories(response);
+				
+			}
+		});
+	}
+	
+	function requestCategoriesChildren(categoryForm) {
+		$.ajax({
+			url: '/api/v1/categories/children',
+			type: 'get',
+			dataType: 'json',
+			data: categoryForm,
+			
+			success: function(response) {
+				// Use showCategories function to show the root category returned
+				showCategories(response);
+				
+			}
+		});
+	}
+		
+</script>
+
+<title>Editar producto</title>
+</head>
+<body>
+
+	<div th:replace="fragments/main-navbar::main-navbar"></div>
+	<div class="container">
+		<div class="row mx-auto">
+			<div class="col-md-4 text-center">
+				<div th:replace="products/fragments/admin-products-sidemenu::products-side-menu"></div>
+			</div>
+			<div class="col-md-8">
+				<div th:replace="products/fragments/admin-edit-product-form::edit-product-form"></div>
+				<!-- Change Category Section -->
+				<div class="card mb-5">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-6">
+								<h5 class="h5 mt-3">Categorias actuales</h5>
+								<nav aria-label="breadcrumb">
+									<ol class="breadcrumb">
+										<li th:each="c : ${productCategories}" class="breadcrumb-item"><a
+											th:text="${c.name}" style="text-decoration: none;"></a></li>
+									</ol>
+								</nav>
+							</div>
+							<div class="col-md-6">
+								<h5 class="h5 mt-3">Elegir nueva Categoria</h5>
+								<nav aria-label="breadcrumb" class="mt-2">
+									<ol id="showCategoryPathContainer" class="breadcrumb">
+										
+									</ol>
+								</nav>
+								<div class="container" id="showCategoriesContainer">
+									<form class="form" id="showCategoriesForm">
+										<input type="hidden" name="productId" th:value="${product.id}" />
+									</form>
+									<div class="btn-group btn-group-sm mt-2" role="group" aria-label="...">
+										<button type="button" class="btn btn-outline-primary" id="showSubCategoriesButton">Ver subcategorias</button>
+										<button type="button" class="btn btn-outline-primary" id="chooseCategoryButton">Elegir</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<!-- End of Change Category Section -->
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

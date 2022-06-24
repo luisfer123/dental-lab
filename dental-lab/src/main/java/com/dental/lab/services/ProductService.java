@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
+import com.dental.lab.exceptions.ProductCategoryNotFoundException;
+import com.dental.lab.exceptions.ProductNotFoundException;
 import com.dental.lab.model.entities.Product;
 
 public interface ProductService {
@@ -19,6 +21,10 @@ public interface ProductService {
 	 */
 	Set<Product> findByCategoryId(Long categoryId);
 	
+	Product findById(Long productId) throws ProductNotFoundException;
+	
+	Product findByIdWithCategories(Long productId) throws ProductNotFoundException;
+	
 	/**
 	 * 
 	 * @param categoryId
@@ -29,4 +35,8 @@ public interface ProductService {
 	 * sorted using the parameter {@code sortBy}.
 	 */
 	Page<Product> findByCategoryId(Long categoryId, int pageNum, int pageSize, String sortBy);
+	
+	Product updateImage(Long productId, byte[] newPicture) throws ProductNotFoundException;
+	
+	Product changeProductCategory(Long productId, Long CagetegoryId) throws ProductNotFoundException, ProductCategoryNotFoundException;
 }

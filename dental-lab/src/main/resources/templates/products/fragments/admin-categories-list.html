@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="categories-list" th:remove="tag">
+		<div class="card mt-2">
+			<div class="card-body">
+				<h4 class="h4 m-3 mb-5 text-center">Categorias:</h4>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li th:each="c : ${categoryPath}" class="breadcrumb-item"><a
+							th:text="${c.name}" th:href="@{/admin/products?category_id=} + ${c.id}" style="text-decoration: none; color: gray;"></a></li>
+					</ol>
+				</nav>
+	
+				<table class="table table-borderless mt-5">
+					<tbody>
+						<tr th:each="category : ${categories}">
+							<th><a style="text-decoration: none; color: gray;"
+								th:href="@{/admin/products?category_id=} + ${category.id}"
+								th:text="${category.name}" class="link"></a></th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

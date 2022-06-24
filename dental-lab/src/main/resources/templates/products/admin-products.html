@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<base th:replace="fragments/bootstrap::head"/>
+
+<title>Administrar Productos</title>
+
+</head>
+<body>
+	<div th:replace="fragments/main-navbar::main-navbar"></div>
+	<div class="container">
+		<!-- Edit product navbar -->
+		<div class="card mt-5">
+			<div class="card-body text-center">
+				<nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
+					<div class="container-fluid">
+						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+						 
+						<div class="collapse navbar-collapse" id="navbarNavDropdown">
+							<ul class="navbar-nav ms-auto">
+								<li class="nav-item">
+									<a class="nav-link active" aria-current="page" th:href="@{/admin/products}">Lista de Productos</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" th:href="@{/admin/products/create}">Agregar Producto</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" th:href="@{/admin/categories/create}">Crear Categoria</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+		<div class="row mx-auto">
+			<!-- Product Categories side menu -->
+			<div class="col-md-4 text-center">
+				<div th:replace="products/fragments/admin-categories-list::categories-list"></div>
+			</div>
+			<!-- Products list -->
+			<div class="col-md-8">
+				<div th:replace="products/fragments/admin-products-list::products-list"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

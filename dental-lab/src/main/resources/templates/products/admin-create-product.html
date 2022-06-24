@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<base th:replace="fragments/bootstrap::head"/>
+
+<title>Crear producto</title>
+</head>
+<body>
+
+	<div th:replace="fragments/main-navbar::main-navbar"></div>
+	<div class="container">
+		<div class="row mx-auto">
+			<div class="col-md-4 text-center">
+				<div th:replace="products/fragments/admin-products-sidemenu::products-side-menu"></div>
+			</div>
+			<div class="col-md-8">
+				<div th:replace="products/fragments/admin-add-product-form::new-product-form"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

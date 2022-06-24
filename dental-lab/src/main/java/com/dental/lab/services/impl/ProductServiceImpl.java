@@ -8,10 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dental.lab.exceptions.ProductCategoryNotFoundException;
+import com.dental.lab.exceptions.ProductNotFoundException;
 import com.dental.lab.model.entities.Product;
+import com.dental.lab.model.entities.ProductCategory;
+import com.dental.lab.repositories.ProductCategoryRepository;
 import com.dental.lab.repositories.ProductRepository;
 import com.dental.lab.services.ProductService;
 
@@ -20,11 +25,35 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	private ProductRepository productRepo;
+	
+	@Autowired
+	private ProductCategoryRepository categoryRepo;
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<Product> findAll() {
 		return productRepo.findAll();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Product findById(Long productId) throws ProductNotFoundException {
+		return productRepo.findById(productId)
+				.orElseThrow(() -> new ProductNotFoundException("Product with id " + productId + " was not found"));
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Product findByIdWithCategories(Long productId) 
+			throws ProductNotFoundException {
+		
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ProductNotFoundException("Product with id: " + productId + " was not found."));
+		
+		Set<ProductCategory> categories = categoryRepo.findByProducts(product);
+		categories.forEach(category -> product.addProductCategory(category));
+		
+		return product;
 	}
 
 	/**
@@ -47,6 +76,58 @@ public class ProductServiceImpl implements ProductService {
 		Pageable paging = PageRequest.of(pageNum, pageSize, Sort.by(sortBy));
 		return productRepo.findByCategoryId(categoryId, paging);
 		
+	}
+	
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Product updateImage(Long productId, byte[] newPicture) 
+			throws ProductNotFoundException {
+		
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ProductNotFoundException("Product with id: " + productId + " was not found."));
+		
+		product.setPicture(newPicture);
+		
+		return productRepo.save(product);
+	}
+	
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Product changeProductCategory(Long productId, Long categoryId)
+			throws ProductNotFoundException, ProductCategoryNotFoundException {
+		
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ProductNotFoundException("Product with id: " + productId + " was not found."));
+		ProductCategory category = categoryRepo.findById(categoryId)
+				.orElseThrow(() -> new ProductCategoryNotFoundException("Product Category with id: " + categoryId + " was not found."));
+		
+		/* One given Product can have only one category, but all parent categories of 
+		 * the chosen category are added as well
+		 */
+		product.removeAllProductCategories();
+		do {
+			product.addProductCategory(category);
+			category = category.getParentCategory();
+		} while(category != null);
+		
+		return productRepo.save(product);
+	}
+	
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Product updateProductInfo(Long productId, String name, 
+			String description, int price) throws ProductNotFoundException {
+		
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new ProductNotFoundException("Product with id: " + productId + " was not found."));
+		
+		product.setName(name);
+		product.setDescription(description);
+		// TODO set new product price
+		
+		return productRepo.save(product);
 	}
 
 }

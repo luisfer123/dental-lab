@@ -15,6 +15,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Only one {@linkplain ProductCategory} can be assign to a {@linkplain Product}
  * at a time; thought, once one {@linkplain ProductCategory} is assigned, the
@@ -44,16 +46,23 @@ public class ProductCategory {
 	@Column(name = "name")
 	private String name;
 	
-	@ManyToMany(mappedBy = "categories")
+	@JsonIgnore
+	@ManyToMany(
+			mappedBy = "categories", 
+			fetch = FetchType.LAZY)
 	private Set<Product> products;
 	
 	@Column(name = "depth")
 	private int depth;
 	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	private ProductCategory parentCategory;
 	
-	@OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
+	@JsonIgnore
+	@OneToMany(mappedBy = 
+			"parentCategory", 
+			fetch = FetchType.EAGER)
 	private Set<ProductCategory> subCategories;
 
 	public int getDepth() {

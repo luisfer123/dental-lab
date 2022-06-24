@@ -1,5 +1,6 @@
 package com.dental.lab.repositories;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +13,8 @@ import com.dental.lab.model.entities.Product;
 import com.dental.lab.model.entities.ProductCategory;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+	
+	Optional<Product> findById(Long productId);
 	
 	/**
 	 * 

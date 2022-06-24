@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="products-side-menu" th:remove="tag">
+
+		<div class="container mt-5">
+			<div class="card mb-4">
+	            <div class="card-body">
+					<h3 class="h3 mt-5">Administrar</h3>
+					<ul class="nav flex-column mt-5 pt-1 pb-3">
+						<li class="nav-item">
+							<a class="nav-link active" style="color: gray;" aria-current="page" th:href="@{/admin/products}">Lista de Productos</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" style="color: gray;" th:href="@{/admin/categories/create}">Crear Categoria</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" style="color: gray;"  th:href="@{/admin/products/create}">Agregar Product</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

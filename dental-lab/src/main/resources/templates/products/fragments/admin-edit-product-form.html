@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="edit-product-form" th:remove="tag">
+		<div class="card mb-2 mt-5">
+			<div class="card-body">
+				<h4 class="h4 text-center" th:text="'Editar ' + ${product.name}"></h4>
+			</div>
+		</div>
+		<!-- Update name form -->
+		<div class="card mb-2">
+			<div class="card-body">
+				<div class="row">
+					<!-- Image input -->
+					<div class="col-md-6">
+						<h5 class="h5 mt-2">Cambiar imagen</h5>
+						<div class="text-center">
+							<img 
+								th:src="@{'data:image/jpeg;base64,'+${productPicture}}"
+								class="img-thumbnail" 
+								alt="...">
+						</div>
+						<form
+							id="updateProductPictureForm" 
+							enctype="multipart/form-data"
+							method="post"
+							th:action="@{/admin/products/update-picture(product_id=${product.id})}">
+								<input 
+									class="form-control form-control-sm mt-2" 
+									id="formFileSm"
+									name="updatePicture" 
+									type="file">
+							<button 
+								type="submit" 
+								id="updateProductPictureButton" 
+								class="btn btn-sm btn-outline-primary mt-2">Actualizar imagen</button>
+						</form>
+					</div>
+					<!-- Name and price column -->
+					<div class="col-md-6">
+					<h5 class="h5 mt-2">Actualizar informaci&oacute;n</h5>
+					<form method="post" th:action="@{/admin/products/edit/(product_id=${product.id})}">
+						<div class="mb-3 mt-3">
+							<label for="name" class="form-label">Nombre</label>
+	  						<input 
+	  							type="text" 
+	  							class="form-control" 
+	  							id="name" 
+	  							placeholder=""
+	  							name="name"
+	  							th:value="${product.name}">
+						</div>
+						<div class="mb-3">
+							<label for="price" class="form-label">Precio</label>
+	  						<input 
+	  							type="number" 
+	  							class="form-control" 
+	  							id="name" 
+	  							placeholder=""
+	  							name="price"
+	  							th:value="${product.name}">
+	  					</div>
+  						<div class="mb-3">
+							<label for="productDescription" class="form-label">Descripci&oacute;n del producto</label>
+							<textarea 
+								name="description" 
+								class="form-control" 
+								id="productDescription" 
+								rows="4"></textarea>
+						</div>
+						<button class="btn btn-sm btn-outline-primary">Guardar</button>
+					</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

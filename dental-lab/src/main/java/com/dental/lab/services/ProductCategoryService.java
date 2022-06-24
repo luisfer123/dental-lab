@@ -2,9 +2,17 @@ package com.dental.lab.services;
 
 import java.util.List;
 
+import com.dental.lab.exceptions.ProductCategoryNotFoundException;
 import com.dental.lab.model.entities.ProductCategory;
+import com.dental.lab.model.payloads.ParentChildrenProductCategoryPayload;
 
 public interface ProductCategoryService {
+	
+	ProductCategory findById(Long categoryId) throws ProductCategoryNotFoundException;
+	
+	List<ProductCategory> findCategoryChildrenById(Long categoryId) throws ProductCategoryNotFoundException;
+	
+	ParentChildrenProductCategoryPayload buildParentChildrenCategoryRestResponse(Long categoryId) throws ProductCategoryNotFoundException;
 	
 	/**
 	 * 
@@ -31,5 +39,6 @@ public interface ProductCategoryService {
 	 *  Appear in the Category tree.
 	 */
 	List<ProductCategory> findCategoryPath(Long categoryId);
+	
 
 }
