@@ -4,9 +4,12 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -39,5 +42,51 @@ public class Order {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private Set<ProductItem> productItems;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Set<ProductItem> getProductItems() {
+		return productItems;
+	}
+
+	public void setProductItems(Set<ProductItem> productItems) {
+		this.productItems = productItems;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(o == this)
+			return true;
+		
+		if(!(o instanceof Order))
+			return false;
+		
+		Order other = (Order) o;
+		return id != null &&
+				id.equals(other.id);
+	}
+	
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 
 }

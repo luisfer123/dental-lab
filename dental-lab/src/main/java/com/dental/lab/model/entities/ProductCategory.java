@@ -65,6 +65,17 @@ public class ProductCategory {
 			fetch = FetchType.EAGER)
 	private Set<ProductCategory> subCategories;
 
+	public ProductCategory() {
+		super();
+	}
+
+	public ProductCategory(String name, int depth, ProductCategory parentCategory) {
+		super();
+		this.name = name;
+		this.depth = depth;
+		this.parentCategory = parentCategory;
+	}
+
 	public int getDepth() {
 		return depth;
 	}

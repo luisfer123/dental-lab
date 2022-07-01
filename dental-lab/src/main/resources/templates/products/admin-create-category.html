@@ -4,6 +4,74 @@
 <head>
 <base th:replace="fragments/bootstrap::head"/>
 
+<script type="text/javascript">
+	$(document).ready(function () {
+		requestRootCategory();
+	});
+	
+function showCategories(categoriesWrapper) {
+		
+		$('#showCategoryPathContainer').children('li').remove();
+		
+		$.each(categoriesWrapper.parentCategoryPath, function(index, category) {
+			$('#showCategoryPathContainer').append(
+				'<li class="breadcrumb-item">' +
+					'<a onclick="event.preventDefault(); returnParentCategoryLink(' + category.id + ')" class="returnParentCategoryLink" href="#" style="text-decoration: none; color: black;">' + category.name + '</a></li>'
+			);
+		});
+		
+		// First dlete radio buttons that are currently in the form.
+		$('#showCategoriesContainer').children('div').remove();
+		
+		$.each(categoriesWrapper.childrenCategories, function(index, category) {
+			$('#showCategoriesContainer').append(
+				'<div class="custom-control custom-radio">' +
+					'<input class="custom-control-input mx-2" type="radio" name="parentCategoryId" id="parentCategoryId' + category.id + '" value="' + category.id + '">' +
+					'<label class="custom-control-label" for="category' + category.id + '">' + 
+						'<a onclick="event.preventDefault(); requestCategoriesChildren(' + category.id + ')" href="#" style="text-decoration: none; color: black;">' + category.name + '</a>' + 
+					'</label>' +
+				'</div>'
+			);
+		});
+		
+	}
+	
+	function returnParentCategoryLink(categoryId) {
+		requestCategoriesChildren(categoryId)
+	}
+	
+	function requestRootCategory() {
+		$.ajax({
+			url: '/api/v1/categories/root',
+			type: 'get',
+			dataType: 'json',
+			
+			success: function(response) {
+				// Use showCategories function to show the root category returned
+				showCategories(response);
+				
+			}
+		});
+	}
+	
+	function requestCategoriesChildren(categoryId) {
+		$.ajax({
+			url: '/api/v1/categories/children',
+			type: 'get',
+			dataType: 'json',
+			data: {'parentCategoryId': categoryId},
+			
+			// response is a wrapper object containing the category selected in the
+			// form, its children categories and category path to the root category
+			success: function(response) {
+				// Use showCategories function to show the category's children returned
+				showCategories(response);
+				
+			}
+		});
+	}
+</script>
+
 <title>Crear categoria</title>
 </head>
 <body>

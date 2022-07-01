@@ -27,11 +27,11 @@
 							enctype="multipart/form-data"
 							method="post"
 							th:action="@{/admin/products/update-picture(product_id=${product.id})}">
-								<input 
-									class="form-control form-control-sm mt-2" 
-									id="formFileSm"
-									name="updatePicture" 
-									type="file">
+							<input 
+								class="form-control form-control-sm mt-2" 
+								id="formFileSm"
+								name="updatePicture" 
+								type="file">
 							<button 
 								type="submit" 
 								id="updateProductPictureButton" 
@@ -56,18 +56,20 @@
 							<label for="price" class="form-label">Precio</label>
 	  						<input 
 	  							type="number" 
+	  							step=0.1
 	  							class="form-control" 
-	  							id="name" 
+	  							id="price" 
 	  							placeholder=""
 	  							name="price"
-	  							th:value="${product.name}">
+	  							th:value="${currentPrice}">
 	  					</div>
   						<div class="mb-3">
 							<label for="productDescription" class="form-label">Descripci&oacute;n del producto</label>
 							<textarea 
+								th:text="${product.description}"
 								name="description" 
 								class="form-control" 
-								id="productDescription" 
+								id="description" 
 								rows="4"></textarea>
 						</div>
 						<button class="btn btn-sm btn-outline-primary">Guardar</button>

@@ -3,6 +3,7 @@ package com.dental.lab.control;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
@@ -12,13 +13,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,9 +31,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dental.lab.exceptions.ProductCategoryNotFoundException;
 import com.dental.lab.exceptions.ProductNotFoundException;
 import com.dental.lab.model.entities.Product;
 import com.dental.lab.model.entities.ProductCategory;
+import com.dental.lab.model.payloads.CreateProductPayload;
 import com.dental.lab.services.ProductCategoryService;
 import com.dental.lab.services.ProductService;
 
@@ -86,9 +93,11 @@ public class AdminProductController {
 	}
 	
 	@GetMapping(path = "/create")
-	public ModelAndView goCreateProduct() {
+	public ModelAndView goCreateProduct(ModelMap model) {
 		
-		return new ModelAndView("products/admin-create-product");
+		model.addAttribute("newProduct", new CreateProductPayload());
+		
+		return new ModelAndView("products/admin-create-product", model);
 	}
 	
 	@GetMapping(path = "/edit")
@@ -111,7 +120,7 @@ public class AdminProductController {
 		} catch (ProductNotFoundException e) {
 			return new ModelAndView("redirect:/admin/products");
 		}
-		
+						
 		List<ProductCategory> sortedCategories = product.getCategories()
 				.stream()
 				.sorted(Comparator.comparingInt(category -> category.getDepth()))
@@ -130,7 +139,8 @@ public class AdminProductController {
 				e.printStackTrace();
 			}
 		}
-						
+								
+		model.addAttribute("currentPrice", (new DecimalFormat("0.#")).format(product.getCurrentPrice().getPrice()));
 		model.addAttribute("productId", productId);
 		model.addAttribute("product", product);
 		model.addAttribute("productCategories", sortedCategories);
@@ -144,13 +154,13 @@ public class AdminProductController {
 			@RequestParam("product_id") Optional<Long> optProductId,
 			@RequestParam("name") Optional<String> optName,
 			@RequestParam("description") Optional<String> optDescription,
-			@RequestParam("price") Optional<Integer> optPrice,
+			@RequestParam("price") Optional<Double> optPrice,
 			ModelMap model) {
 		
 		Long productId = null;
 		String name = null;
+		Double price = null;
 		String description = optDescription.orElse("");
-		int price = -1;
 		
 		try {
 			productId = optProductId.get();
@@ -164,8 +174,8 @@ public class AdminProductController {
 		} catch(NoSuchElementException e) {
 			return new ModelAndView("redirect:/admin/products/edit?product_id=" + productId);
 		}
-		
-		System.out.println(productId + name + description + price);
+
+		productService.updateProductInfo(productId, name, description, price);
 		
 		return new ModelAndView("redirect:/admin/products/edit?product_id=" + productId);
 	}
@@ -211,4 +221,27 @@ public class AdminProductController {
 		
 		return "{\"msg\":\"success\"}";
 	}
+	
+	@PostMapping(path = "/create")
+	public ModelAndView createProduct(
+			@Valid @ModelAttribute("newProduct") CreateProductPayload newProduct,
+			BindingResult result,
+			ModelMap model) {
+		
+		Product productCreated = null;
+		
+		if(result.hasErrors()) {
+			return new ModelAndView("products/admin-create-product", result.getModel());
+		}
+
+		try {
+			productCreated = productService.createProduct(newProduct);
+		} catch(ProductCategoryNotFoundException e) {
+			e.printStackTrace();
+			return new ModelAndView("redirect:/admin/products/create");
+		}
+		
+		return new ModelAndView("redirect:/admin/products/edit?product_id=" + productCreated.getId());
+	}
+	
 }

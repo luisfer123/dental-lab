@@ -4,9 +4,49 @@
 <body>
 
 	<div th:fragment="new-category-form" th:remove="tag">
-		<div class="card my-5">
+		<div class="card mt-5 mb-2">
 			<div class="card-body">
-				
+				<h3 class="h3 text-center">Crear Categor&iacute;a</h3>
+			</div>
+		</div>
+		<div class="card">
+			<div class="card-body">
+				<form method="post" th:action="@{/admin/categories/create}">
+					<div class="row">
+						<div class="col-md-6">
+							<div>
+								<h5 class="h5 mt-3">Elegir Categor&iacute;a padre</h5>
+								<nav aria-label="breadcrumb" class="mt-3">
+									<ol id="showCategoryPathContainer" class="breadcrumb">
+										
+									</ol>
+								</nav>
+								<div class="container" id="showCategoriesContainer">
+									
+								</div>
+								<div class="form-text">
+									Elegir categor&iacute;a padre para la nueva categor&iacute;a.
+									Si no se selecciona alguna categor&iacute;a, la nueva categor&iacute;a
+									se agregar&aacute; como sub-categor&iacute;a de "categor&iacute;a ra&iacute;z".
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="mb-3 mt-3">
+								<label for="name" class="form-label">Nombre</label>
+		  						<input 
+		  							type="text" 
+		  							class="form-control" 
+		  							id="name" 
+		  							placeholder=""
+		  							name="name">
+		  					</div>
+		  					<div class="position-absolute bottom-0 end-0 mb-3 me-3">
+								<button type="submit" class="btn btn-sm btn-outline-primary">Guardar</button>
+							</div>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

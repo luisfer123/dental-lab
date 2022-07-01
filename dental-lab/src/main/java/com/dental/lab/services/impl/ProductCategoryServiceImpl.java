@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -137,6 +139,52 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 		Collections.reverse(categoryPath);
 		
 		return categoryPath;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ProductCategory createProductCategory(
+			Long parentCategoryId, String name) {
+		
+		ProductCategory parentCategory = null;
+		
+		if(parentCategoryId == null) {
+			parentCategory = this.findRootCategory();
+		} else {
+			try {
+				parentCategory = 
+						categoryRepo.findById(parentCategoryId).get();
+			} catch(NoSuchElementException e) {
+				parentCategory = this.findRootCategory();
+			}
+		}
+		
+		ProductCategory newCategory = new ProductCategory();
+		newCategory.setName(name);
+		newCategory.setParentCategory(parentCategory);
+		newCategory.setDepth(this.findCategoryDepth(newCategory));
+				
+		return categoryRepo.save(newCategory);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public int findCategoryDepth(ProductCategory category) {
+		int depth = 0;
+		
+		while(category.getParentCategory() != null) {
+			category = category.getParentCategory();
+			depth += 1;
+		}
+		
+		return depth;
 	}
 
 }

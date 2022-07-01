@@ -56,7 +56,7 @@ public class UpdateUserServiceImpl implements UpdateUserService {
 		User user = userRepo.findById(userId)
 				.orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " was not found."));
 		
-		user.setUsername(email);
+		user.setEmail(email);
 		
 		return userRepo.save(user);
 

@@ -130,22 +130,21 @@ public class AdminUsersController {
 		return new ModelAndView("redirect:/admin/users/add");
 	}
 	
-	@PostMapping(path = "/edit")
-	public ModelAndView editUser(
-			@Valid @ModelAttribute("userEdited") EditUserPayload userEdited,
-			BindingResult result,
-			@RequestParam("user_id") Long userId,
-			ModelMap model) {
-		
-		userService.saveEditedUser(userEdited, userId);
-		
-		if(result.hasErrors())
-			result.getAllErrors().forEach(err -> {
-				System.out.println(err.getDefaultMessage());
-			});
-		
-		return new ModelAndView("users/admin-edit-user");
-	}
+	/*
+	 * @PostMapping(path = "/edit") public ModelAndView editUser(
+	 * 
+	 * @Valid @ModelAttribute("userEdited") EditUserPayload userEdited,
+	 * BindingResult result,
+	 * 
+	 * @RequestParam("user_id") Long userId, ModelMap model) {
+	 * 
+	 * userService.saveEditedUser(userEdited, userId);
+	 * 
+	 * if(result.hasErrors()) result.getAllErrors().forEach(err -> {
+	 * System.out.println(err.getDefaultMessage()); });
+	 * 
+	 * return new ModelAndView("users/admin-edit-user"); }
+	 */
 	
 	/**
 	 * Search for the Users matching the given criteria.

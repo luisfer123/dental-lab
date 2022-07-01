@@ -40,5 +40,28 @@ public interface ProductCategoryService {
 	 */
 	List<ProductCategory> findCategoryPath(Long categoryId);
 	
+	/**
+	 * Creates a new {@linkplain ProductCategory} and saves it in database.<br>
+	 * {@code parentCategoryId} is used to set the parent category of the new
+	 * {@code ProductCategory}.<br>
+	 * If {@code parentCategoryId} is either {@code null} or is not valid, then
+	 * {@code RootCategory} is added as parent category of the new category
+	 * created.
+	 * 
+	 * @param parentCategoryId - can be null
+	 * @param name
+	 * @return
+	 */
+	ProductCategory createProductCategory(Long parentCategoryId, String name);
+	
+	/**
+	 * Finds category's depth in the category tree.<br>
+	 * {@code RootCategory} is defined to have depth equal to zero.
+	 * 
+	 * @param category
+	 * @return
+	 */
+	int findCategoryDepth(ProductCategory category);
+	
 
 }

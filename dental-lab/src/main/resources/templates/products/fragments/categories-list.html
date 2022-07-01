@@ -10,14 +10,14 @@
 				<nav aria-label="breadcrumb">
 					<ol class="breadcrumb">
 						<li th:each="c : ${categoryPath}" class="breadcrumb-item"><a
-							th:text="${c.name}" th:href="@{/products/list?category_id=} + ${c.id}" style="text-decoration: none;"></a></li>
+							th:text="${c.name}" th:href="@{/products/list?category_id=} + ${c.id}" style="text-decoration: none; color: gray;"></a></li>
 					</ol>
 				</nav>
 	
 				<table class="table table-borderless mt-5">
 					<tbody>
 						<tr th:each="category : ${categories}">
-							<th><a style="text-decoration: none;"
+							<th><a style="text-decoration: none; color: gray;"
 								th:href="@{/products/list?category_id=} + ${category.id}"
 								th:text="${category.name}" class="link"></a></th>
 						</tr>

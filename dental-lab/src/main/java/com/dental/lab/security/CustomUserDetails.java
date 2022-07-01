@@ -17,6 +17,8 @@ public class CustomUserDetails implements UserDetails {
 	 * 
 	 */
 	private static final long serialVersionUID = 4644676413490213530L;
+	
+	private Long id;
 		
 	private String username;
 	
@@ -26,9 +28,10 @@ public class CustomUserDetails implements UserDetails {
 	
 	private Set<GrantedAuthority> authorities = new HashSet<>();
 	
-	public CustomUserDetails(String username, String password, String email,
+	public CustomUserDetails(Long id, String username, String password, String email,
 			Set<GrantedAuthority> authorities) {
 		super();
+		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -43,6 +46,7 @@ public class CustomUserDetails implements UserDetails {
 				.collect(Collectors.toSet());
 		
 		CustomUserDetails customUserDetails = new CustomUserDetails(
+				user.getId(),
 				user.getUsername(), 
 				user.getPassword(), 
 				user.getEmail(), 
@@ -88,6 +92,10 @@ public class CustomUserDetails implements UserDetails {
 	
 	public String getEmail() {
 		return email;
+	}
+	
+	public Long getId() {
+		return this.id;
 	}
 
 }

@@ -78,6 +78,12 @@ public class User {
 			orphanRemoval = true)
 	private Set<Phone> phones = new HashSet<>();
 	
+	@OneToMany(
+			mappedBy = "user",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private Set<Order> orders = new HashSet<>();
+	
 	public User() {}
 	
 	public User(String username, String password, String email, String firstName,
@@ -190,6 +196,26 @@ public class User {
 
 	public void setAddresses(Set<Address> addresses) {
 		this.addresses = addresses;
+	}
+
+	public Set<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(Set<Phone> phones) {
+		this.phones = phones;
+	}
+
+	public Set<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
+	}
+
+	public void setAuthorities(Set<Authority> authorities) {
+		this.authorities = authorities;
 	}
 
 	@Override

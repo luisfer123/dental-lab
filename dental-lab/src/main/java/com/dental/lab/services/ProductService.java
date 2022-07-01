@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import com.dental.lab.exceptions.ProductCategoryNotFoundException;
 import com.dental.lab.exceptions.ProductNotFoundException;
 import com.dental.lab.model.entities.Product;
+import com.dental.lab.model.payloads.CreateProductPayload;
 
 public interface ProductService {
 	
@@ -39,4 +40,8 @@ public interface ProductService {
 	Product updateImage(Long productId, byte[] newPicture) throws ProductNotFoundException;
 	
 	Product changeProductCategory(Long productId, Long CagetegoryId) throws ProductNotFoundException, ProductCategoryNotFoundException;
+	
+	Product updateProductInfo(Long productId, String name, String description, double price) throws ProductNotFoundException;
+	
+	Product createProduct(CreateProductPayload newProductData) throws ProductCategoryNotFoundException;
 }

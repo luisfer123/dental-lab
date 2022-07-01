@@ -60,7 +60,7 @@
 		$.each(categoriesWrapper.parentCategoryPath, function(index, category) {
 			$('#showCategoryPathContainer').append(
 				'<li class="breadcrumb-item">' +
-					'<a onclick="event.preventDefault(); returnParentCategoryLink(' + category.id + ')" class="returnParentCategoryLink" href="#" style="text-decoration: none;">' + category.name + '</a></li>'
+					'<a onclick="event.preventDefault(); returnParentCategoryLink(' + category.id + ')" class="returnParentCategoryLink" href="#" style="text-decoration: none; color: black;">' + category.name + '</a></li>'
 			);
 		});
 		
@@ -103,8 +103,10 @@
 			dataType: 'json',
 			data: categoryForm,
 			
+			// response is a wrapper object containing the category selected in the
+			// form, its children categories and category path to the root category
 			success: function(response) {
-				// Use showCategories function to show the root category returned
+				// Use showCategories function to show the category's children returned
 				showCategories(response);
 				
 			}

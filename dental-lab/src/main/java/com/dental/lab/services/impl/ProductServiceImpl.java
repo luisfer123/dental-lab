@@ -1,5 +1,7 @@
 package com.dental.lab.services.impl;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +18,8 @@ import com.dental.lab.exceptions.ProductCategoryNotFoundException;
 import com.dental.lab.exceptions.ProductNotFoundException;
 import com.dental.lab.model.entities.Product;
 import com.dental.lab.model.entities.ProductCategory;
+import com.dental.lab.model.entities.ProductPricing;
+import com.dental.lab.model.payloads.CreateProductPayload;
 import com.dental.lab.repositories.ProductCategoryRepository;
 import com.dental.lab.repositories.ProductRepository;
 import com.dental.lab.services.ProductService;
@@ -115,19 +119,48 @@ public class ProductServiceImpl implements ProductService {
 		return productRepo.save(product);
 	}
 	
+	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Product updateProductInfo(Long productId, String name, 
-			String description, int price) throws ProductNotFoundException {
+			String description, double price) throws ProductNotFoundException {
 		
 		Product product = productRepo.findById(productId)
 				.orElseThrow(() -> new ProductNotFoundException("Product with id: " + productId + " was not found."));
 		
 		product.setName(name);
 		product.setDescription(description);
-		// TODO set new product price
+
+		ProductPricing productPrice = new ProductPricing();
+		productPrice.setCreationDate(new Timestamp(System.currentTimeMillis()));
+		productPrice.setPrice(BigDecimal.valueOf(price));
 		
+		product.addPrice(productPrice);
+
 		return productRepo.save(product);
+	}
+	
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Product createProduct(
+			CreateProductPayload newProductData) throws ProductCategoryNotFoundException {
+		
+		Product newProduct = new Product();
+		
+		newProduct.setName(newProductData.getName());
+		newProduct.setDescription(newProductData.getDescription());
+		
+		ProductCategory category = categoryRepo.findById(newProductData.getCategoryId())
+				.orElseThrow(() -> new ProductCategoryNotFoundException("Product Category with id: " + newProductData.getCategoryId() + " was not found."));
+		newProduct.addProductCategory(category);
+		
+		ProductPricing price = new ProductPricing();
+		price.setCreationDate(new Timestamp(System.currentTimeMillis()));
+		price.setPrice(newProductData.getPrice());
+		newProduct.addPrice(price);
+		
+		return productRepo.save(newProduct);
 	}
 
 }
