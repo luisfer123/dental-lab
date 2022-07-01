@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<base th:replace="fragments/bootstrap::head"/>
+
+<title>Crear Orden</title>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		console.log('hi');
+	});
+</script>
+
+</head>
+<body>
+
+	<div th:replace="fragments/main-navbar::main-navbar"></div>
+	<div class="container">
+	<div class="card mt-5">
+	<div class="card-body">
+		<div class="row mx-auto">
+			<div class="col-md-6">
+				<div th:replace="orders/fragments/select-products-list::select-products-list"></div>
+			</div>
+			<div class="col-md-6">
+				<div th:replace="orders/fragments/create-order-form::new-order-form"></div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+
+</body>
+</html>

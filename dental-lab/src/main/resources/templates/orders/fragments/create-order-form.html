@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="new-order-form" th:remove="tag">
+		<div style=" overflow-y: auto;" class="card mb-2 vh-100">
+			<div class="card-body">
+				<h4 class="h4 text-center">Ordenar Productos</h4>
+				<div class="form-text mb-3">
+					Selecciona a la izquierda el producto que deseas ordenar.
+				</div>
+				<h5 class="h5 mt-3 mb-1 text-center">Productos seleccionados</h5>
+				<ul id="selectedProductsContainer" class="list-group list-group-flush">
+					<li class="list-group-item">
+						<div class="card">
+							<div class="card-body">
+								<h5 class="card-title">Card title</h5>
+								<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+								<a href="#" class="card-link">Card link</a>
+								<a href="#" class="card-link">Another link</a>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+</body>
