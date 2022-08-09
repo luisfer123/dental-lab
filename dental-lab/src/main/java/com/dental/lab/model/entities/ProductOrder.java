@@ -1,8 +1,11 @@
 package com.dental.lab.model.entities;
 
+import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,36 +19,50 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
- * Each {@linkplain Order} contains a set of {@linkplain ProductItem}s. <br>
+ * Each {@linkplain ProductOrder} contains a set of {@linkplain ProductItem}s. <br>
  * {@linkplain ProductItem}s are created at the moment a customer selects a
- * {@linkplain Product} to be added in the {@linkplain Order}. <br> 
- * If a given {@linkplain Order} is cancelled (deleted), all {@linkplain ProductItem}s 
- * contained in such {@linkplain Order} are deleted as well. <br>
+ * {@linkplain Product} to be added in the {@linkplain ProductOrder}. <br> 
+ * If a given {@linkplain ProductOrder} is cancelled (deleted), all {@linkplain ProductItem}s 
+ * contained in such {@linkplain ProductOrder} are deleted as well. <br>
  * In the application, each {@linkplain User} may be a customer <br>
- * Administrators can create {@linkplain Order}s for a customer (which is suppose to be
- * the most common use case), but also customers can create its own {@linkplain Order}s.
+ * Administrators can create {@linkplain ProductOrder}s for a customer (which is suppose to be
+ * the most common use case), but also customers can create its own {@linkplain ProductOrder}s.
  * 
  * @author Luis Fernando Martinez Oritz
  *
  */
 @Entity
-@Table(name = "Order")
-public class Order {
+@Table(name = "Product_order")
+public class ProductOrder {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	
+	@Column(name = "creation_date")
+	private Timestamp creationDate;
+	
 	@OneToMany(
 			mappedBy = "order",
 			cascade = CascadeType.ALL,
-			orphanRemoval = true)
-	private Set<ProductItem> productItems;
+			orphanRemoval = true,
+			fetch = FetchType.EAGER)
+	private Set<ProductItem> productItems = new HashSet<>();
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "User_id")
 	private User user;
+	
+	public void addProductItem(ProductItem item) {
+		this.productItems.add(item);
+		item.setOrder(this);
+	}
+	
+	public void removeProductItem(ProductItem item) {
+		this.productItems.remove(item);
+		item.setOrder(null);
+	}
 	
 	public Long getId() {
 		return id;
@@ -71,15 +88,23 @@ public class Order {
 		this.user = user;
 	}
 
+	public Timestamp getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Timestamp creationDate) {
+		this.creationDate = creationDate;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this)
 			return true;
 		
-		if(!(o instanceof Order))
+		if(!(o instanceof ProductOrder))
 			return false;
 		
-		Order other = (Order) o;
+		ProductOrder other = (ProductOrder) o;
 		return id != null &&
 				id.equals(other.id);
 	}

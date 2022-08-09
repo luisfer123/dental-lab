@@ -50,7 +50,7 @@ public class Product {
 	
 	@OneToMany(
 			mappedBy = "product",
-			cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+			cascade = CascadeType.ALL,
 			orphanRemoval = false)
 	private Set<ProductItem> productItems = new HashSet<>();
 	

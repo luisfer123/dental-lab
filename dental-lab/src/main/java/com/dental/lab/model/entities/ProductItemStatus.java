@@ -31,18 +31,25 @@ public class ProductItemStatus {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", 
-		columnDefinition = "ENUM('IN_CARD', 'ORDERED', 'READY', 'DELIVERED')")
+		columnDefinition = "ENUM('RECEIVED', 'ACCEPTED', 'READY', 'DELIVERED')")
 	private EProductItemStatus status;
 	
 	@Column(name = "creation_date")
 	private Timestamp creationDate;
 	
-	@Column(name = "comment")
-	private String comment;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Product_item_id")
 	private ProductItem productItem;
+
+	public ProductItemStatus() {
+		super();
+	}
+
+	public ProductItemStatus(EProductItemStatus status, Timestamp creationDate) {
+		super();
+		this.status = status;
+		this.creationDate = creationDate;
+	}
 
 	public Long getId() {
 		return id;
@@ -66,14 +73,6 @@ public class ProductItemStatus {
 
 	public void setCreationDate(Timestamp creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	public ProductItem getProductItem() {

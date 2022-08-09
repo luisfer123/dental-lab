@@ -83,6 +83,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
+	public boolean existsById(Long productId) {
+		return productRepo.existsById(productId);
+	}
+	
+	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Product updateImage(Long productId, byte[] newPicture) 

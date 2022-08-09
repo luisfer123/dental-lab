@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<base th:replace="fragments/bootstrap::head"/>
+
+<title>Mis Pedidos</title>
+</head>
+<body>
+	<div th:replace="fragments/main-navbar::main-navbar"></div>
+	<div class="container">
+		<div class="row mx-auto">
+			<div class="col-md-4 text-center mt-5">
+				<div th:replace="orders/fragments/orders-list-sidemenu::side-menu"></div>
+			</div>
+			
+			<div class="col-md-8 mt-5">
+				<div th:replace="orders/fragments/orders-list::orders-list"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

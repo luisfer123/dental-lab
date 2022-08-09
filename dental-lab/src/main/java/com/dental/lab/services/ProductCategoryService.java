@@ -28,7 +28,7 @@ public interface ProductCategoryService {
 	 * @return - A sorted List containing all sub-categories of the {@linkplain ProductCategory}
 	 * with id {@code categoryId}. Sub-categories are sorted by its name.
 	 */
-	List<ProductCategory> findSubCategories(Long categoryId);
+	List<ProductCategory> findSubCategories(Long categoryId) throws ProductCategoryNotFoundException;
 	
 	/**
 	 * 

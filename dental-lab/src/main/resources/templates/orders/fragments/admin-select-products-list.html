@@ -63,7 +63,7 @@
 										<h5 class="modal-title" id="staticBackdropLabel">Agregar producto</h5>
 										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
-									<form method="post" th:id="'addProductToOrderForm'+${p.id}" th:action="@{/orders/create/select_product}">
+									<form method="post" th:id="'addProductToOrderForm'+${p.id}" th:action="@{/admin/orders/create/select_product}">
 										<div class="modal-body">
 											<div class="input-group mb-3">
 												<span class="input-group-text" id="inputGroup-name">Nombre</span>

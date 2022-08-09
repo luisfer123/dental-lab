@@ -1,5 +1,6 @@
 package com.dental.lab.model.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -50,7 +51,7 @@ public class ProductCategory {
 	@ManyToMany(
 			mappedBy = "categories", 
 			fetch = FetchType.LAZY)
-	private Set<Product> products;
+	private Set<Product> products = new HashSet<>();
 	
 	@Column(name = "depth")
 	private int depth;
@@ -63,7 +64,7 @@ public class ProductCategory {
 	@OneToMany(mappedBy = 
 			"parentCategory", 
 			fetch = FetchType.EAGER)
-	private Set<ProductCategory> subCategories;
+	private Set<ProductCategory> subCategories = new HashSet<>();
 
 	public ProductCategory() {
 		super();

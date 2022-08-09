@@ -21,11 +21,15 @@
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<li><a class="dropdown-item" th:href="@{/admin/products}">Productos</a></li>
 						<li><a class="dropdown-item" th:href="@{/admin/users}">Usuarios</a></li>
+						<li><a class="dropdown-item" th:href="@{/admin/orders/create}">Crear Orden</a></li>
 					</ul>
 					
 				</li>
 		        <li class="nav-item">
 		          <a class="nav-link" th:href="@{/products/list}">Productos Disponibles</a>
+		        </li>
+		        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'CLIENT', 'DENTIST')">
+		          <a class="nav-link" th:href="@{/orders}">Mis Pedidos</a>
 		        </li>
 		        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'CLIENT', 'DENTIST')">
 		          <a class="nav-link" th:href="@{/orders/create}">Ordenar Productos</a>

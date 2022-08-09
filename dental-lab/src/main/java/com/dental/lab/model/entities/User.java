@@ -17,6 +17,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * There are different types of Users:
  * - Dentist
@@ -57,6 +59,7 @@ public class User {
 	@Column(name = "second_last_name")
 	private String secondLastName;
 	
+	@JsonIgnore
 	@ManyToMany(cascade = {
 			CascadeType.PERSIST,
 			CascadeType.MERGE
@@ -66,23 +69,26 @@ public class User {
 			inverseJoinColumns = @JoinColumn(name = "authority_id"))
 	private Set<Authority> authorities = new HashSet<>();
 	
+	@JsonIgnore
 	@OneToMany(
 			mappedBy = "user",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private Set<Address> addresses = new HashSet<>();
 	
+	@JsonIgnore
 	@OneToMany(
 			mappedBy = "user",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private Set<Phone> phones = new HashSet<>();
 	
+	@JsonIgnore
 	@OneToMany(
 			mappedBy = "user",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
-	private Set<Order> orders = new HashSet<>();
+	private Set<ProductOrder> orders = new HashSet<>();
 	
 	public User() {}
 	
@@ -116,6 +122,16 @@ public class User {
 	public void removeAllAuthorities() {
 		authorities.forEach(auth -> auth.getUsers().remove(this));
 		authorities = new HashSet<>();
+	}
+	
+	public void addOrder(ProductOrder order) {
+		orders.add(order);
+		order.setUser(this);
+	}
+	
+	public void removeOrder(ProductOrder order) {
+		this.orders.remove(order);
+		order.setUser(null);
 	}
 
 	public Long getId() {
@@ -206,11 +222,11 @@ public class User {
 		this.phones = phones;
 	}
 
-	public Set<Order> getOrders() {
+	public Set<ProductOrder> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(Set<Order> orders) {
+	public void setOrders(Set<ProductOrder> orders) {
 		this.orders = orders;
 	}
 

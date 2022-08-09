@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="orders-list" th:remove="tag">
+		<div class="card">
+			<div class="card-body">
+				<h4 class="h4 text-center mb-4">Productos ordenados</h4>
+				<div th:each="order : ${orders}">
+					<p>Ordenado: <span th:text="${#dates.format(order.creationDate, 'dd-MM-yyyy HH:mm:ss')}"></span></p>
+					<ul>
+						<li th:each="item : ${order.productItems}">
+							<p>
+								<span><b th:text="${item.product.name}"></b></span>
+								<span th:switch="${item.currentStatus.status.toString}">
+									<span th:case="'RECEIVED'">
+								        | Recibido
+								    </span>
+								    <span th:case="'ACCEPTED'">
+								        | En proceso
+								    </span>
+								    <span th:case="'READY'">
+								        | Terminado
+								    </span>
+								    <span th:case="'DELIVERED'">
+								        | Entregado
+								    </span>
+								</span>
+								<button 
+									style="border: none" 
+									class=" float-end badge bg-secondary rounded-pill" 
+									type="button" 
+									data-bs-toggle="collapse" 
+									th:attr="data-bs-target='#collapseItem'+${item.id}" 
+									aria-expanded="false" 
+									aria-controls="collapseExample">Ver detalles</button>
+							</p>
+							<div class="collapse" th:id="'collapseItem'+${item.id}">
+								<div class="card card-body">
+									<ul>
+										<li>Precio: <span th:text="${item.price}"></span></li>
+										<li>Estatus: 
+											<span th:switch="${item.currentStatus.status.toString}">
+												<span th:case="'RECEIVED'">
+											        Recibido
+											    </span>
+											    <span th:case="'ACCEPTED'">
+											        En proceso
+											    </span>
+											    <span th:case="'READY'">
+											        Terminado
+											    </span>
+											    <span th:case="'DELIVERED'">
+											        Entregado
+											    </span>
+											</span>
+											(<span th:text="${#dates.format(item.currentStatus.creationDate, 'dd-MM-yyyy')}"></span>)
+										</li>
+										<li th:if="${!#strings.isEmpty(item.note)}">Detalles adicionales: <span th:text="${item.note}"></span></li>
+									</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<div class="mt-2">
+			<nav aria-label="Page navigation">
+				<ul class="pagination">
+					<li class="page-item">
+						<a class="page-link" th:href="@{/orders(page_number=0)}" aria-label="Previous"> <span aria-hidden="true">&laquo;</span></a></li>
+					<li class="page-item" th:each="pageNumber : ${pageNumbers}">
+						<a class="page-link" th:href="@{/orders(page_num=${pageNumber})}" th:text="${pageNumber}"></a></li>
+					<li class="page-item">
+						<a class="page-link" th:href="@{/orders(page_num=${totalPages-1})}"	aria-label="Next"> <span aria-hidden="true">&raquo;</span></a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	
+</body>

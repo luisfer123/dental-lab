@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="admin-pre-order-view" th:remove="tag">
+		<div style=" overflow-y: auto;" class="card mb-2 vh-100">
+			<div class="card-body">
+				<div class="mb-3">
+					<h5 class="h5">Seleccionar un usuario</h5>
+				</div>
+				<div class="mb-3">
+					<h5 class="h5">Ordern para el usuario</h5>
+				</div>
+				<h4 class="h4 text-center">Ordenar Productos</h4>
+				<div th:if="${not #lists.isEmpty(preOrderProducState.preOrderProducts)}">
+					<div class="input-group mb-3">
+						<span class="input-group-text" id="inputGroup-number-products">N&uacute;mero de productos</span>
+						<input 
+							type="number" 
+							class="form-control" 
+							aria-describedby="inputGroup-number-products"
+							style="background-color: white;"
+							th:value="${#lists.size(preOrderProducState.preOrderProducts)}"
+							disabled>
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-text" id="inputGroup-total-price">Precio total</span>
+						<input 
+							type="number" 
+							class="form-control" 
+							aria-describedby="inputGroup-total-price"
+							style="background-color: white;"
+							th:value="${preOrderProducState.totalPrice}"
+							disabled>
+					</div>
+					<h5 class="h5 mt-3 mb-1 text-center">Productos seleccionados</h5>
+				</div>
+				<div th:if="${#lists.isEmpty(preOrderProducState.preOrderProducts)}">
+					<div class="form-text mb-3">
+						Aun no se ha seleccionado alg&uacute;n producto.
+						Selecciona a la izquierda el producto que deseas ordenar.
+						La orden puede consistir de uno o mas productos.
+					</div>
+				</div>
+				<ul id="selectedProductsContainer" class="list-group list-group-flush">
+					<li th:each="productInfo : ${preOrderProducState.preOrderProducts}" class="list-group-item">
+						<div class="card">
+							<div class="card-body">
+								<h5 class="card-title" th:text="${productInfo.name}"></h5>
+								<h6 class="card-subtitle mb-2 text-muted" th:text="'Precio: $ ' + ${productInfo.stringPrice}"></h6>
+								<p class="card-text" th:if="${!#strings.isEmpty(productInfo.note)}"><strong>Detalles adicionales: </strong> <span th:text="${productInfo.note}"></span></p>
+								<!-- Button trigger modal -->
+								<a 
+									class="card-link" 
+									href="#"
+									data-bs-toggle="modal" 
+									th:attr="data-bs-target='#editProductEtaticBackdrop'+${productInfo.tempId}">
+								  Editar</a>
+								<a th:href="@{/admin/orders/create/delete_product(product_id=${productInfo.productId}, product_temp_id=${productInfo.tempId})}" class="card-link">Eliminar</a>
+							</div>
+						</div>
+						<!-- Modal -->
+						<div class="modal fade" th:id="'editProductEtaticBackdrop'+${productInfo.tempId}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="staticBackdropLabel">Editar producto</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<form method="post" th:id="'editProductOrderForm'+${productInfo.tempId}" th:action="@{/admin/orders/create/edit_selected_product}">
+										<div class="modal-body">
+											<div class="input-group mb-3">
+												<span class="input-group-text" id="inputGroup-name">Nombre</span>
+												<input 
+													type="text" 
+													name="name"
+													th:value="${productInfo.name}"
+													class="form-control" 
+													aria-describedby="inputGroup-name"
+													style="background-color: white;"
+													readonly>
+											</div>
+											<div class="input-group mb-3">
+												<span class="input-group-text" id="inputGroup-price">Precio</span>
+												<input 
+													type="number" 
+													name="price"
+													th:value="${productInfo.price}"
+													class="form-control" 
+													aria-describedby="inputGroup-name"
+													style="background-color: white;"
+													readonly>
+											</div>
+											<div class="mb-3">
+												<label for="noteTextArea" class="form-label">Detalles adicionales</label>
+												<textarea 
+													class="form-control" 
+													id="noteTextArea" 
+													name="note"
+													th:text="${productInfo.note}"
+													rows="5"></textarea>
+											</div>										
+											<input type="hidden" name="productId" th:value="${productInfo.productId}">
+											<input type="hidden" name="tempId" th:value="${productInfo.tempId}">
+											
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+											<button 
+												type="button"
+												class="btn btn-primary"
+												th:onclick="'sendEditProductToOrder(\'' + ${productInfo.tempId} + '\');'">Editar</button>
+											
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>				
+				
+				<div class="text-end" th:if="${not #lists.isEmpty(preOrderProducState.preOrderProducts)}">
+					<form th:action="@{/admin/orders/create}" method="post" id="createOrderForm">
+						<button 
+							type="button"
+							onclick="createOrder()" 
+							class="btn btn-primary mt-3">Enviar Orden</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</body>

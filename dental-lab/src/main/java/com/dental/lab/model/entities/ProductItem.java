@@ -2,6 +2,7 @@ package com.dental.lab.model.entities;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -21,7 +22,7 @@ import org.hibernate.annotations.JoinFormula;
 
 /**
  * A {@linkplain ProductItem} instance is created until a customer adds a 
- * {@linkplain Product} to an {@linkplain Order}.<br>
+ * {@linkplain Product} to an {@linkplain ProductOrder}.<br>
  * By default, {@code ProductItem.price} equals {@code product.currentPrice}, or it 
  * may be left as null, in such case we use {@code product.currentPrice} instead.
  * If for some reason, a special price will be offer to the client, {@code ProductItem.price}
@@ -40,8 +41,8 @@ public class ProductItem {
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "order_id")
-	private Order order;
+	@JoinColumn(name = "Product_order_id")
+	private ProductOrder order;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
@@ -56,28 +57,43 @@ public class ProductItem {
 	@Column(name = "price")
 	private BigDecimal price;
 	
+	@Column(name = "note")
+	private String note;
+	
 	@Column(name = "delivery_deadline")
 	private Timestamp deliveriDeadline;
 	
 	@OneToMany(mappedBy = "productItem",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
-	private Set<ProductItemStatus> status;
+	private Set<ProductItemStatus> status = new HashSet<>();
 	
 	@ManyToOne
 	@JoinFormula(
-			"SELECT pis.id " +
-			"FROM Product_item_status pis " +
-			"WHERE pis.Product_item_id = id " +
-			"ORDER BY pis.creation_date DESC " +
-			"LIMIT 1")
+			"(" +
+				"SELECT pis.id " +
+				"FROM Product_item_status pis " +
+				"WHERE pis.Product_item_id = id " +
+				"ORDER BY pis.creation_date DESC " +
+				"LIMIT 1" +
+			")")
 	private ProductItemStatus currentStatus;
 	
 	@OneToMany(mappedBy = "productItem",
 			cascade = CascadeType.ALL,
 			fetch = FetchType.LAZY,
 			orphanRemoval = true)
-	private Set<PartialPayment> partialPayments;
+	private Set<PartialPayment> partialPayments = new HashSet<>();
+	
+	public void addStatus(ProductItemStatus status) {
+		this.status.add(status);
+		status.setProductItem(this);
+	}
+	
+	public void removeStatus(ProductItemStatus status) {
+		this.status.remove(status);
+		status.setProductItem(null);
+	}
 
 	public Long getId() {
 		return id;
@@ -87,11 +103,11 @@ public class ProductItem {
 		this.id = id;
 	}
 
-	public Order getOrder() {
+	public ProductOrder getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(ProductOrder order) {
 		this.order = order;
 	}
 
@@ -133,6 +149,22 @@ public class ProductItem {
 
 	public void setCurrentStatus(ProductItemStatus currentStatus) {
 		this.currentStatus = currentStatus;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public Set<PartialPayment> getPartialPayments() {
+		return partialPayments;
+	}
+
+	public void setPartialPayments(Set<PartialPayment> partialPayments) {
+		this.partialPayments = partialPayments;
 	}
 
 	@Override

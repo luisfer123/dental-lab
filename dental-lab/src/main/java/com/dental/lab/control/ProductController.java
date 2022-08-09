@@ -41,10 +41,15 @@ public class ProductController {
 			model.addAttribute("categories", categoryService.findSubCategories(rootCategory.getId()));
 			model.addAttribute("categoryPath", categoryService.findCategoryPath(rootCategory.getId()));
 		} else {
-			Long categoryId = optCategoryId.get();
-			model.addAttribute("products", productService.findByCategoryId(categoryId));
-			model.addAttribute("categories", categoryService.findSubCategories(categoryId));
-			model.addAttribute("categoryPath", categoryService.findCategoryPath(categoryId));
+			try {
+				Long categoryId = optCategoryId.get();
+				model.addAttribute("products", productService.findByCategoryId(categoryId));
+				model.addAttribute("categories", categoryService.findSubCategories(categoryId));
+				model.addAttribute("categoryPath", categoryService.findCategoryPath(categoryId));
+			} catch(Exception e) {
+				e.printStackTrace();
+				return new ModelAndView("redirect:/prodcts");
+			}
 		}
 		
 		return new ModelAndView("products/products", model);

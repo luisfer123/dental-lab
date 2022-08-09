@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -20,13 +21,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dental.lab.exceptions.UserNotFoundException;
 import com.dental.lab.model.entities.User;
 import com.dental.lab.model.enums.EAuthority;
 import com.dental.lab.model.payloads.CreateUserFormPayload;
-import com.dental.lab.model.payloads.EditUserPayload;
 import com.dental.lab.model.payloads.UserSearchPayload;
 import com.dental.lab.services.UserService;
 
@@ -231,6 +232,47 @@ public class AdminUsersController {
 	public ModelAndView goSearchUser(ModelMap model) {
 		model.addAttribute("userSearchPayload", new UserSearchPayload());
 		return new ModelAndView("users/admin-user-search", model);
+	}
+	
+	@PostMapping(path = "/set-user")
+	public @ResponseBody ResponseEntity<List<User>> restSearchUser(
+			@RequestParam("userSearchData") UserSearchPayload userSearchData,
+			ModelMap model) {
+		
+		List<User> result = new ArrayList<>();
+		
+		switch(userSearchData.getSearchBy()) {
+		case "username":
+			try {
+				result = Arrays.asList(
+						userService.findByUsername(userSearchData.getSearchKeyword()));
+			} catch(UserNotFoundException e) {
+				result = userService.findSimilarUsersByUsername(
+						userSearchData.getSearchKeyword(), 6);
+			}
+			break;
+		case "fullLastName":
+			try {
+				result = userService.findByFullLastName(
+						userSearchData.getSearchKeyword());
+			} catch(UserNotFoundException e) {
+				result = userService.findSimilarUsersByFullLastName(
+						userSearchData.getSearchKeyword(), 6);
+			}
+			break;
+		case "email":
+			try {
+				result = Arrays.asList(userService.findByEmail(
+						userSearchData.getSearchKeyword()));
+			} catch(UserNotFoundException e) {
+				result = userService.findSimilarUsersByEmail(
+						userSearchData.getSearchKeyword(), 6);
+			}
+			break;
+		}		
+		
+		return ResponseEntity
+				.ok(result);
 	}
 
 }

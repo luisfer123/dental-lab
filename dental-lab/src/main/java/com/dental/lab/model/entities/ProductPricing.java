@@ -2,6 +2,7 @@ package com.dental.lab.model.entities;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,6 +53,14 @@ public class ProductPricing {
 
 	public BigDecimal getPrice() {
 		return price;
+	}
+	
+	public String getFormatedPrice() {
+		if(price != null)
+			return (new DecimalFormat("0.#"))
+				.format(price);
+		else
+			return "";
 	}
 
 	public void setPrice(BigDecimal price) {

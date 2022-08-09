@@ -7,19 +7,30 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dental.lab.model.entities.Authority;
 import com.dental.lab.model.entities.Product;
 import com.dental.lab.model.entities.ProductCategory;
 import com.dental.lab.model.entities.ProductPricing;
+import com.dental.lab.model.entities.User;
+import com.dental.lab.model.enums.EAuthority;
+import com.dental.lab.repositories.AuthorityRepository;
 import com.dental.lab.repositories.ProductCategoryRepository;
 import com.dental.lab.repositories.ProductPricingRepository;
 import com.dental.lab.repositories.ProductRepository;
-import com.dental.lab.services.ProductService;
+import com.dental.lab.repositories.UserRepository;
 
 @Service
 public class DataInitializationServiceImpl {
+	
+	@Autowired
+	private UserRepository userRepo;
+	
+	@Autowired
+	private AuthorityRepository authRepo;
 	
 	@Autowired
 	private ProductPricingRepository pricingRepo;
@@ -28,21 +39,70 @@ public class DataInitializationServiceImpl {
 	private ProductRepository productRepo;
 	
 	@Autowired
-	private ProductService productService;
+	private ProductCategoryRepository categoryRepo;
 	
 	@Autowired
-	private ProductCategoryRepository categoryRepo;
+	private PasswordEncoder encoder;
 	
 	@Transactional
 	@EventListener(classes = ApplicationReadyEvent.class)
 	public void onInit() {
-			
+		
+		addAuthoritiesAndUsers();
+		addProductCategories();
+		addProductsWithCategories();
 		addProductPricing();
 	}
 	
-	public void addProducts() {
-		Product incrustacionDeResina = 
-				new Product("Incrustación de Resina", "descritpion");
+	@Transactional
+	public void addAuthoritiesAndUsers() {
+		if(userRepo.findAll().size() == 0 && authRepo.findAll().size() == 0) {
+			
+			Authority roleAdmin = new Authority(EAuthority.ROLE_ADMIN);
+			Authority roleClient = new Authority(EAuthority.ROLE_CLIENT);
+			Authority roleDentist = new Authority(EAuthority.ROLE_DENTIST);
+			Authority roleTechnician = new Authority(EAuthority.ROLE_TECHNICIAN);
+			Authority roleUser = new Authority(EAuthority.ROLE_USER);
+			
+			roleAdmin = authRepo.save(roleAdmin);
+			roleClient = authRepo.save(roleClient);
+			roleDentist = authRepo.save(roleDentist);
+			roleTechnician = authRepo.save(roleTechnician);
+			roleUser = authRepo.save(roleUser);
+			
+			User adminUser = new User(
+					"admin", encoder.encode("password"), "admin@mail.com", "adminn", "adminsn", "adminap", "adminam");
+			adminUser.addAuthority(roleAdmin);
+			adminUser.addAuthority(roleClient);
+			adminUser.addAuthority(roleDentist);
+			adminUser.addAuthority(roleTechnician);
+			adminUser.addAuthority(roleUser);
+			userRepo.save(adminUser);
+			
+			User clientUser = new User(
+					"client", encoder.encode("password"), "client@mail.com", "clientn", "clientsn", "clientap", "clientam");
+			clientUser.addAuthority(roleClient);
+			clientUser.addAuthority(roleUser);
+			userRepo.save(clientUser);
+			
+			User dentistUser = new User(
+					"dentist", encoder.encode("password"), "dentist@mail.com", "dentistn", "dentistsn", "dentistap", "dentistam");
+			dentistUser.addAuthority(roleDentist);
+			dentistUser.addAuthority(roleUser);
+			userRepo.save(dentistUser);
+			
+			User techUser = new User(
+					"tech", encoder.encode("password"), "tech@mail.com", "techn", "techsn", "techap", "techam");
+			techUser.addAuthority(roleTechnician);
+			techUser.addAuthority(roleUser);
+			userRepo.save(techUser);
+			
+			User user = new User(
+					"user", encoder.encode("password"), "user@mail.com", "usern", "usersn", "userap", "useram");
+			user.addAuthority(roleUser);
+			userRepo.save(user);
+			
+		}
 	}
 	
 	@Transactional
@@ -86,6 +146,77 @@ public class DataInitializationServiceImpl {
 	}
 	
 	@Transactional
+	public void addProductsWithCategories() {
+		
+		if(productRepo.findAll().size() == 0) {
+			
+			ProductCategory resina = categoryRepo.findByName("Resina").get();
+			ProductCategory metalCeramica = categoryRepo.findByName("Metal Cerámica").get();
+			ProductCategory libreDeMetal = categoryRepo.findByName("Libre de Metal").get();
+			
+			Product incrustacionDeResina =
+					new Product("Incrustación de Resina", "descritpion");
+			incrustacionDeResina = 
+					this.addCategoryPathToProduct(resina, incrustacionDeResina);
+			productRepo.save(incrustacionDeResina);
+			
+			Product carillaDeResina = 
+					new Product("Carilla de Resina", "description");
+			carillaDeResina = 
+					this.addCategoryPathToProduct(resina, carillaDeResina);
+			productRepo.save(carillaDeResina);
+			
+			Product coronaDeResina = 
+					new Product("Corona de Resina", "description");
+			coronaDeResina = 
+					this.addCategoryPathToProduct(resina, coronaDeResina);
+			productRepo.save(coronaDeResina);
+			
+			Product unidadMetalCeramica =
+					new Product("Unidad Metal Cerámica", "description");
+			unidadMetalCeramica = 
+					this.addCategoryPathToProduct(metalCeramica, unidadMetalCeramica);
+			productRepo.save(unidadMetalCeramica);
+			
+			Product metalCeramicaConCollarCeramico = 
+					new Product("Metal Cerámica con Collar Cerámico", "descritpion");
+			metalCeramicaConCollarCeramico = 
+					this.addCategoryPathToProduct(metalCeramica, metalCeramicaConCollarCeramico);
+			productRepo.save(metalCeramicaConCollarCeramico);
+			
+			Product coronaDeDisilicatoDeLitio =
+					new Product("Corona de Disilicato de Litio", "description");
+			coronaDeDisilicatoDeLitio = 
+					this.addCategoryPathToProduct(libreDeMetal, coronaDeDisilicatoDeLitio);
+			productRepo.save(coronaDeDisilicatoDeLitio);
+			
+			Product carillaDeDisilicatoDeLitio =
+					new Product("Carilla de Disilicato de Litio", "description");
+			carillaDeDisilicatoDeLitio = 
+					this.addCategoryPathToProduct(libreDeMetal, carillaDeDisilicatoDeLitio);
+			productRepo.save(carillaDeDisilicatoDeLitio);
+			
+			Product incrustacionDeDisilicatoDeLitio =
+					new Product("Incrustación de Disilicato de Litio", "description");
+			incrustacionDeDisilicatoDeLitio = 
+					this.addCategoryPathToProduct(libreDeMetal, incrustacionDeDisilicatoDeLitio);
+			productRepo.save(incrustacionDeDisilicatoDeLitio);
+			
+			Product estratificadoSobreDisilicato =
+					new Product("Estratificado Sobre Disilicato", "description");
+			estratificadoSobreDisilicato = 
+					this.addCategoryPathToProduct(libreDeMetal, estratificadoSobreDisilicato);
+			productRepo.save(estratificadoSobreDisilicato);
+			
+			Product estratificadoSobreZirconia = 
+					new Product("Estratificado Sobre Zirconia", "description");
+			estratificadoSobreZirconia = 
+					this.addCategoryPathToProduct(libreDeMetal, estratificadoSobreZirconia);
+			productRepo.save(estratificadoSobreZirconia);
+		}
+	}
+	
+	@Transactional
 	public void addProductPricing() {
 		
 		if(pricingRepo.findAll().size() == 0) {
@@ -117,7 +248,8 @@ public class DataInitializationServiceImpl {
 		}
 	}
 	
-	public Product addProductCategories(ProductCategory category, Product product) {
+	@Transactional
+	public Product addCategoryPathToProduct(ProductCategory category, Product product) {
 		if(category != null)
 			product.addProductCategory(category);
 		

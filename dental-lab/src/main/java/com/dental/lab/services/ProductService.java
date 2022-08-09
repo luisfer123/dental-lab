@@ -37,6 +37,8 @@ public interface ProductService {
 	 */
 	Page<Product> findByCategoryId(Long categoryId, int pageNum, int pageSize, String sortBy);
 	
+	boolean existsById(Long productId);
+	
 	Product updateImage(Long productId, byte[] newPicture) throws ProductNotFoundException;
 	
 	Product changeProductCategory(Long productId, Long CagetegoryId) throws ProductNotFoundException, ProductCategoryNotFoundException;

@@ -89,9 +89,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProductCategory> findSubCategories(Long categoryId) {
+	public List<ProductCategory> findSubCategories(Long categoryId)
+			throws ProductCategoryNotFoundException {
 		ProductCategory category = categoryRepo.findById(categoryId)
-				.orElseThrow(() -> new RuntimeException());
+				.orElseThrow(() -> new ProductCategoryNotFoundException("ProductCategory with id " + categoryId + " was not found."));
 		
 		return category.getSubCategories()
 				.stream().sorted(Comparator.comparing(ProductCategory::getName))
