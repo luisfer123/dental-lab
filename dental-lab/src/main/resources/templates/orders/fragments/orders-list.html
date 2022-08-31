@@ -6,11 +6,13 @@
 	<div th:fragment="orders-list" th:remove="tag">
 		<div class="card">
 			<div class="card-body">
-				<h4 class="h4 text-center mb-4">Productos ordenados</h4>
+				
 				<div th:each="order : ${orders}">
 					<p>Ordenado: <span th:text="${#dates.format(order.creationDate, 'dd-MM-yyyy HH:mm:ss')}"></span></p>
 					<ul>
 						<li th:each="item : ${order.productItems}">
+						
+						
 							<p>
 								<span><b th:text="${item.product.name}"></b></span>
 								<span th:switch="${item.currentStatus.status.toString}">
@@ -27,15 +29,73 @@
 								        | Entregado
 								    </span>
 								</span>
+								
+								<!-- Button trigger modal -->
+								<button 
+									sec:authorize="hasRole('ADMIN')" 
+									th:if="${user != null}"
+									type="button" 
+									style="border: none"
+									class="ms-1 float-end badge bg-secondary rounded-pill" 
+									data-bs-toggle="modal" 
+									th:attr="data-bs-target='#updateItemModal'+${item.id}">Editar</button>
+									
+								<!-- Button collapse -->
 								<button 
 									style="border: none" 
-									class=" float-end badge bg-secondary rounded-pill" 
+									class="float-end badge bg-secondary rounded-pill" 
 									type="button" 
 									data-bs-toggle="collapse" 
 									th:attr="data-bs-target='#collapseItem'+${item.id}" 
 									aria-expanded="false" 
 									aria-controls="collapseExample">Ver detalles</button>
-							</p>
+							</p>	
+							<!-- Modal -->
+							<div 
+								th:if="${user != null}" 
+								sec:authorize="hasRole('ADMIN')" 
+								class="modal fade" 
+								th:id="updateItemModal+${item.id}" 
+								tabindex="-1" 
+								aria-labelledby="exampleModalLabel" 
+								aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<!-- Edit Order Forms -->
+										<form th:action="@{/admin/product-item/update-status}" method="post">
+											<div class="modal-header">
+												<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div class="modal-body">
+												<div th:if="${user != null}" sec:authorize="hasRole('ADMIN')">
+													<div class="input-group mb-3">
+														<label class="input-group-text" for="inputGroupSelectChooseProductStatus">Elegir Status</label>
+														<select 
+															name="newProductItemStatus"
+															class="form-select form-select-sm" 
+															aria-label=".form-select-sm example" 
+															id="inputGroupSelectChooseProductStatus">
+															<option 
+																th:each="productItemStatus : ${productItemStatusList}"
+																th:value="${productItemStatus}"
+																th:text="${productItemStatus.nameInSpanish}"></option>
+														</select>
+													</div>
+												</div>
+												<input type="hidden" name="productItemId" th:value="${item.id}"/>
+												<input type="hidden" name="userId" th:value="${user.id}"/>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+												<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>								
+								
+							<!-- Collapse -->
 							<div class="collapse" th:id="'collapseItem'+${item.id}">
 								<div class="card card-body">
 									<ul>
@@ -56,6 +116,7 @@
 											    </span>
 											</span>
 											(<span th:text="${#dates.format(item.currentStatus.creationDate, 'dd-MM-yyyy')}"></span>)
+											
 										</li>
 										<li th:if="${!#strings.isEmpty(item.note)}">Detalles adicionales: <span th:text="${item.note}"></span></li>
 									</ul>

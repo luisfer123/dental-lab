@@ -413,4 +413,10 @@ public class UserServiceImpl implements UserService {
 		return userRepo.existsByUsername(username);
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existsById(Long userId) {
+		return userRepo.existsById(userId);
+	}
+	
 }

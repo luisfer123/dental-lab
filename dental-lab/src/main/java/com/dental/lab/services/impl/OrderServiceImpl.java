@@ -46,19 +46,28 @@ public class OrderServiceImpl implements OrderService {
 	public ProductOrder createOrder(PreOrderCurrentStatePayload preOrder) 
 			throws ProductNotFoundException, UserNotFoundException {
 		
-		// Add new Order to Logged in User.
+		User user = null;
+		
+		// If no user was selected, add new ProductOrder to the current logged in User
+		if(preOrder.getSelectedUserUsername() == null || preOrder.getSelectedUserUsername().length() == 0) {
+			// Add new Order to Logged in User.
+			CustomUserDetails principal =
+					(CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			user = userRepo.findById(principal.getId())
+					.orElseThrow(() -> new UserNotFoundException("User with id " + principal.getId() + " was not found."));
+		} else {
+			user = userRepo.findByUsername(preOrder.getSelectedUserUsername())
+					.orElseThrow(() -> new UserNotFoundException("User with username " + preOrder.getSelectedUserUsername() + " was not found."));
+		}
+		
 		ProductOrder newOrder = new ProductOrder();
-		CustomUserDetails principal =
-				(CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User currentUser = userRepo.findById(principal.getId())
-				.orElseThrow(() -> new UserNotFoundException("User with id " + principal.getId() + " was not found."));
-		currentUser.addOrder(newOrder);
+		user.addOrder(newOrder);
 		
 		// Add creationDate to new Order
 		newOrder.setCreationDate(new Timestamp(System.currentTimeMillis()));
 		
 		// Create ProductItem for each PreOrderProductInfo and add it to new Order
-		for(PreOrderProductInfo preOrderProduct : preOrder.getPreOrderProducts()) {
+		for(PreOrderProductInfo preOrderProduct : preOrder.getPreOrderProducts()) { 
 			ProductItem productItem = new ProductItem();
 			productItem.setPrice(preOrderProduct.getPrice());
 			productItem.addStatus(new ProductItemStatus(
@@ -77,12 +86,14 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepo.save(newOrder);
 	}
 	
+	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or principal.id = :userId")
 	public Set<ProductOrder> findByUserId(Long userId) {
 		return orderRepo.findByUserId(userId);
 	}
 	
+	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or principal.id = :userId")
 	public Page<ProductOrder> findByUserIdWithProductItems(
@@ -99,6 +110,7 @@ public class OrderServiceImpl implements OrderService {
 		
 	}
 	
+	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or principal.id = :userId")
 	public Page<ProductOrder> findByUserIdWithProductItemsWithGivenStatus(
@@ -112,6 +124,12 @@ public class OrderServiceImpl implements OrderService {
 			.forEach(order -> order.getProductItems().forEach(pi -> pi.getProduct().getName()));
 		
 		return ordersPage;
+	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECHNICIAN')")
+	public boolean hasCredentialsCreateOrderSelectUser() {
+		return true;
 	}
 
 }

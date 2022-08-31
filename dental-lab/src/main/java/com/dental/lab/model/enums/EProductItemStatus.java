@@ -2,11 +2,23 @@ package com.dental.lab.model.enums;
 
 public enum EProductItemStatus {
 	
-	RECEIVED,
+	RECEIVED ("Recibido"),
 
-	ACCEPTED,
+	ACCEPTED ("En Proceso"),
 	
-	READY,
+	READY ("Terminado"),
 	
-	DELIVERED,
+	DELIVERED ("Entregado"),
+	
+	;
+	
+	private final String nameInSpanish;
+	
+	private EProductItemStatus(String nameInSpanish) {
+		this.nameInSpanish = nameInSpanish;
+	}
+	
+	public String getNameInSpanish() {
+		return this.nameInSpanish;
+	}
 }

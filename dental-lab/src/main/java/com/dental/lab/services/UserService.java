@@ -181,5 +181,7 @@ public interface UserService {
 	boolean existsByEmail(String email);
 	
 	boolean existsByUsername(String username);
+	
+	boolean existsById(Long userId);
 
 }

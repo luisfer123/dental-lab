@@ -18,5 +18,15 @@ public interface OrderService {
 	Page<ProductOrder> findByUserIdWithProductItems(Long userId, int pageNum, int pageSize, String sortBy);
 	
 	Page<ProductOrder> findByUserIdWithProductItemsWithGivenStatus(Long userId, EProductItemStatus itemStatus, int pageNum, int pageSize, String sortBy);
+	
+	/**
+	 * Used only to check whether the current user has the credential to create
+	 * a {@linkplain ProductOrder} in behalf of another user. <br>
+	 * It is not recommended to use {@code PreAuthoriezed} annotation in the control
+	 * layer. We can use this method instead.
+	 * 
+	 * @return true if the user has the credentials needed.
+	 */
+	boolean hasCredentialsCreateOrderSelectUser();
 
 }

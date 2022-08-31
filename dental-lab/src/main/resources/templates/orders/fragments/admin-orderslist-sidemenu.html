@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+	<div th:fragment="side-menu" th:remove="tag">
+
+		<div class="container">
+			<div class="card mb-4">
+	            <div class="card-body">
+					<ul class="nav flex-column mt-5 pt-1 pb-3">
+						
+						<li class="nav-item">
+							<form method="post" th:action="@{/admin/orders/item-status}">
+								<div class="text-start mb-1">Filtrar por Status</div>
+								<div class="row">
+									<div class="col-md-8">
+										<select name="updatedProductItemStatusFilter" class="form-select form-select-sm" aria-label=".form-select-sm example">
+											<option value="ALL">Todos</option>
+											<option value="RECEIVED">Recibido</option>
+											<option value="ACCEPTED">En proceso</option>
+											<option value="READY">Terminado</option>
+											<option value="DELIVERED">Entregado</option>
+										</select>
+									</div>
+									<input type="hidden" name="userId" th:value="${user.id}"/>
+									<div class="col-md-4">
+										<button type="submit" class="btn btn-sm btn-secondary">Aplicar</button>
+									</div>
+								</div>
+							</form>
+						</li>
+						<li class="nav-item">
+							<a 
+								class="nav-link active mt-3" 
+								style="color: gray;" 
+								aria-current="page" 
+								th:href="@{/admin/orders/select_user(user_id=${user.id})}">Ordernar productos</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" style="color: gray;" >Agregar Product</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

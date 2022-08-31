@@ -4,19 +4,19 @@
 <head>
 <base th:replace="fragments/bootstrap::head"/>
 
-<title>Mis Pedidos</title>
+<title>Pedidos</title>
 </head>
 <body>
 	<div th:replace="fragments/main-navbar::main-navbar"></div>
 	<div class="container">
 		<div class="row mx-auto">
 			<div class="col-md-4 text-center mt-5">
-				<div th:replace="orders/fragments/orders-list-sidemenu::side-menu"></div>
+				<div th:replace="orders/fragments/admin-orderslist-sidemenu::side-menu"></div>
 			</div>
 			<div class="col-md-8 mt-5">
 				<div class="card">
 					<div class="card-body">
-						<h4 class="h4 text-center mb-2">Productos ordenados</h4>
+						<h4 class="h4 text-center mb-2">Productos ordenados por el usuario  <span th:text="${user.firstName}"></span></h4>
 					</div>
 				</div>
 				<div th:replace="orders/fragments/orders-list::orders-list"></div>
